@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seeker</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="icon" href="seeker.png">
+</head>
+<body>
+
+  <div class="userbar">
+    <button class="menu-toggle"><i class="fas fa-bars"></i></button>
+    <div class="userbar-links">
+      <a href="#" class="userbar-link"><i class="fas fa-user"></i> Profile</a>
+      <a href="#" class="userbar-link"><i class="fas fa-life-ring"></i> Support</a>
+      <a href="#" class="userbar-link"><i class="fas fa-book"></i> Docs</a>
+      <a href="#" class="userbar-link"><i class="fas fa-envelope"></i> Contact</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <img src="https://i.ibb.co/pvmJX8pm/output-onlinepngtools.png" alt="Seeker Logo" class="logo">
+    <div class="search-container">
+      <input type="text" id="search-box" placeholder="Enter your search query..." class="search-box">
+      <button id="search-button" class="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </div>
+    <p class="description">Seeker generates advanced Google search strings to help you find precise information effortlessly. Designed for students and researchers.<br><br>
+    
+    Alternative: <a class="color" href="#">Manual Search</a></p>
+  </div>
+
+  <script>
+
+    document.querySelector(".menu-toggle").addEventListener("click", function () {
+      document.querySelector(".userbar-links").classList.toggle("active");
+    });
+  </script>
+</body>
+</html>
