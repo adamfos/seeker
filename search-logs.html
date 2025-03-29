@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seeker » Search Logs</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="icon" href="assets/img/seeker.png">
+</head>
+<body>
+  <div class="admin-container">
+    <div class="admin-sidebar">
+      <div class="admin-logo">
+        <img src="https://i.ibb.co/pvmJX8pm/output-onlinepngtools.png" alt="Seeker Logo">
+      </div>
+      <nav class="admin-nav">
+        <a href="admin.html" class="admin-nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="users.html" class="admin-nav-link"><i class="fas fa-users"></i> Users</a>
+        <a href="analytics.html" class="admin-nav-link"><i class="fas fa-chart-line"></i> Analytics</a>
+        <a href="settings.html" class="admin-nav-link"><i class="fas fa-cog"></i> Settings</a>
+        <a href="#" class="admin-nav-link active"><i class="fas fa-search"></i> Search Logs</a>
+        <a href="security.html" class="admin-nav-link"><i class="fas fa-shield-alt"></i> Security</a>
+      </nav>
+      <div class="admin-footer">
+        <a href="index.html" class="admin-nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </div>
+    
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-breadcrumb">
+          <span>Search Logs</span>
+        </div>
+        <div class="admin-user">
+          <span>Admin User</span>
+          <div class="admin-avatar">AU</div>
+        </div>
+      </div>
+      
+      <div class="admin-content">
+        <div class="admin-section">
+          <div class="admin-toolbar">
+            <div class="search-box-container">
+              <input type="text" placeholder="Search logs..." class="admin-search">
+              <button class="admin-search-btn"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="filter-group">
+              <label>Filter by:</label>
+              <select class="admin-select">
+                <option selected>All searches</option>
+                <option>Academic</option>
+                <option>Student</option>
+                <option>Professional</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="admin-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>User</th>
+                  <th>Original Query</th>
+                  <th>Generated Query</th>
+                  <th>Engine</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>2023-11-15 14:32:10</td>
+                  <td>john.researcher@university.edu</td>
+                  <td>quantum physics papers</td>
+                  <td>"quantum physics" filetype:pdf after:2020 site:.edu</td>
+                  <td><span class="badge google">Google</span></td>
+                  <td>
+                    <button class="table-btn view"><i class="fas fa-eye"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2023-11-15 14:15:42</td>
+                  <td>sarah.student@college.edu</td>
+                  <td>machine learning tutorials</td>
+                  <td>"machine learning" tutorials 2023 filetype:pdf OR filetype:pptx</td>
+                  <td><span class="badge google">Google</span></td>
+                  <td>
+                    <button class="table-btn view"><i class="fas fa-eye"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2023-11-15 13:58:21</td>
+                  <td>mike@company.com</td>
+                  <td>market analysis techniques</td>
+                  <td>"market analysis" techniques filetype:pdf OR filetype:docx</td>
+                  <td><span class="badge scholar">Scholar</span></td>
+                  <td>
+                    <button class="table-btn view"><i class="fas fa-eye"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2023-11-15 13:42:35</td>
+                  <td>emma.scientist@lab.org</td>
+                  <td>climate change data</td>
+                  <td>"climate change" data filetype:xls OR filetype:csv after:2018</td>
+                  <td><span class="badge google">Google</span></td>
+                  <td>
+                    <button class="table-btn view"><i class="fas fa-eye"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2023-11-15 13:25:18</td>
+                  <td>david@research.net</td>
+                  <td>AI ethics guidelines</td>
+                  <td>"AI ethics" OR "artificial intelligence ethics" guidelines filetype:pdf</td>
+                  <td><span class="badge scholar">Scholar</span></td>
+                  <td>
+                    <button class="table-btn view"><i class="fas fa-eye"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="admin-pagination">
+            <button class="pagination-btn disabled"><i class="fas fa-chevron-left"></i></button>
+            <button class="pagination-btn active">1</button>
+            <button class="pagination-btn">2</button>
+            <button class="pagination-btn">3</button>
+            <span class="pagination-ellipsis">...</span>
+            <button class="pagination-btn">12</button>
+            <button class="pagination-btn"><i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

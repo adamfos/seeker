@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seeker » Analytics</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="icon" href="assets/img/seeker.png">
+</head>
+<body>
+  <div class="admin-container">
+    <div class="admin-sidebar">
+      <div class="admin-logo">
+        <img src="https://i.ibb.co/pvmJX8pm/output-onlinepngtools.png" alt="Seeker Logo">
+      </div>
+      <nav class="admin-nav">
+        <a href="admin.html" class="admin-nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="users.html" class="admin-nav-link"><i class="fas fa-users"></i> Users</a>
+        <a href="#" class="admin-nav-link active"><i class="fas fa-chart-line"></i> Analytics</a>
+        <a href="settings.html" class="admin-nav-link"><i class="fas fa-cog"></i> Settings</a>
+        <a href="search-logs.html" class="admin-nav-link"><i class="fas fa-search"></i> Search Logs</a>
+        <a href="security.html" class="admin-nav-link"><i class="fas fa-shield-alt"></i> Security</a>
+      </nav>
+      <div class="admin-footer">
+        <a href="index.html" class="admin-nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </div>
+    
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-breadcrumb">
+          <span>Analytics</span>
+        </div>
+        <div class="admin-user">
+          <span>Admin User</span>
+          <div class="admin-avatar">AU</div>
+        </div>
+      </div>
+      
+      <div class="admin-content">
+        <div class="admin-section">
+          <div class="analytics-filters">
+            <div class="filter-group">
+              <label>Time Period:</label>
+              <select class="admin-select">
+                <option>Last 7 days</option>
+                <option selected>Last 30 days</option>
+                <option>Last 90 days</option>
+                <option>Custom range</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>User Type:</label>
+              <select class="admin-select">
+                <option selected>All Users</option>
+                <option>Academic</option>
+                <option>Student</option>
+                <option>Professional</option>
+              </select>
+            </div>
+            <button class="admin-btn primary"><i class="fas fa-filter"></i> Apply Filters</button>
+          </div>
+          
+          <div class="analytics-grid">
+            <div class="analytics-card large">
+              <h3>Search Activity</h3>
+              <div class="chart-placeholder">
+                <img src="https://via.placeholder.com/600x300/2a2a2b/9F67E3?text=Search+Activity+Chart" alt="Search Activity Chart">
+              </div>
+            </div>
+            
+            <div class="analytics-card">
+              <h3>User Growth</h3>
+              <div class="chart-placeholder">
+                <img src="https://via.placeholder.com/300x200/2a2a2b/9F67E3?text=User+Growth+Chart" alt="User Growth Chart">
+              </div>
+            </div>
+            
+            <div class="analytics-card">
+              <h3>Search Types</h3>
+              <div class="chart-placeholder">
+                <img src="https://via.placeholder.com/300x200/2a2a2b/9F67E3?text=Search+Types+Chart" alt="Search Types Chart">
+              </div>
+            </div>
+            
+            <div class="analytics-card large">
+              <h3>Top Search Terms</h3>
+              <div class="top-terms-list">
+                <div class="term-item">
+                  <span class="term-rank">1</span>
+                  <span class="term-text">quantum physics research papers</span>
+                  <span class="term-count">1,243 searches</span>
+                </div>
+                <div class="term-item">
+                  <span class="term-rank">2</span>
+                  <span class="term-text">machine learning tutorials 2023</span>
+                  <span class="term-count">987 searches</span>
+                </div>
+                <div class="term-item">
+                  <span class="term-rank">3</span>
+                  <span class="term-text">climate change studies after:2020</span>
+                  <span class="term-count">756 searches</span>
+                </div>
+                <div class="term-item">
+                  <span class="term-rank">4</span>
+                  <span class="term-text">artificial intelligence ethics</span>
+                  <span class="term-count">632 searches</span>
+                </div>
+                <div class="term-item">
+                  <span class="term-rank">5</span>
+                  <span class="term-text">renewable energy innovations</span>
+                  <span class="term-count">589 searches</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="analytics-card">
+              <h3>User Locations</h3>
+              <div class="chart-placeholder">
+                <img src="https://via.placeholder.com/300x200/2a2a2b/9F67E3?text=User+Locations+Map" alt="User Locations Map">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
