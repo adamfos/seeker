@@ -13,29 +13,209 @@
 
   <div class="userbar">
     <button class="menu-toggle"><i class="fas fa-bars"></i></button>
-    <div class="userbar-links">
-      <a href="#" class="userbar-link"><i class="fas fa-user"></i> Profile</a>
-      <a href="#" class="userbar-link"><i class="fas fa-life-ring"></i> Support</a>
-      <a href="#" class="userbar-link"><i class="fas fa-book"></i> Docs</a>
-      <a href="#" class="userbar-link"><i class="fas fa-envelope"></i> Contact</a>
+    <div class="userbar-links" id="userbarLinks">
     </div>
   </div>
 
-  <div class="container">
-    <img src="https://i.ibb.co/pvmJX8pm/output-onlinepngtools.png" alt="Seeker Logo" class="logo">
-    <div class="search-container">
-      <input type="text" id="search-box" placeholder="Enter your search query..." class="search-box">
-      <button id="search-button" class="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
+  <div class="container" id="mainContent">
+    <div id="authContainer">
     </div>
-    <p class="description">Seeker generates advanced Google search strings to help you find precise information effortlessly. Designed for students and researchers.<br><br>
-    
-    Alternative: <a class="color" href="#">Manual Search</a></p>
   </div>
 
-  <script>
+  <div id="authModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div id="modalContent"></div>
+    </div>
+  </div>
 
-    document.querySelector(".menu-toggle").addEventListener("click", function () {
-      document.querySelector(".userbar-links").classList.toggle("active");
+  <script type="module">
+    import { getAuthToken, logout } from './auth.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const authToken = getAuthToken();
+      updateUI(authToken);
+      
+      document.querySelector(".menu-toggle").addEventListener("click", function () {
+        document.querySelector(".userbar-links").classList.toggle("active");
+      });
+    });
+
+    function updateUI(user) {
+      const userbarLinks = document.getElementById('userbarLinks');
+      const mainContent = document.getElementById('mainContent');
+      const authContainer = document.getElementById('authContainer');
+      
+      if (user) {
+        // Start with base links for all logged-in users
+        let linksHTML = `
+          <a href="#" class="userbar-link"><i class="fas fa-user"></i> Profile</a>
+          <a href="#" class="userbar-link"><i class="fas fa-search"></i> My Searches</a>
+          <a href="#" class="userbar-link"><i class="fas fa-cog"></i> Settings</a>
+        `;
+        
+        // Add Admin Panel link if user is admin
+        if (user.is_admin) {
+          linksHTML += `
+            <a href="admin.html" class="userbar-link"><i class="fas fa-gavel"></i> Admin Panel</a>
+          `;
+        }
+        
+        linksHTML += `
+          <a href="#" id="logoutBtn" class="userbar-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        `;
+        
+        userbarLinks.innerHTML = linksHTML;
+        
+        mainContent.innerHTML = `
+          <img src="https://i.ibb.co/pvmJX8pm/output-onlinepngtools.png" alt="Seeker Logo" class="logo">
+          <div class="search-container">
+            <input type="text" id="search-box" placeholder="Enter your search query..." class="search-box">
+            <button id="search-button" class="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
+          </div>
+          <p class="description">
+            Seeker generates advanced Google search strings to help you find precise information effortlessly. 
+            Designed for students and researchers.<br><br>
+            Alternative: <a class="color" href="#">Manual Search</a>
+          </p>
+        `;
+        
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+        
+      } else {
+        userbarLinks.innerHTML = `
+          <a href="#" id="loginBtn" class="userbar-link"><i class="fas fa-sign-in-alt"></i> Login</a>
+          <a href="#" id="registerBtn" class="userbar-link"><i class="fas fa-user-plus"></i> Register</a>
+        `;
+        
+        authContainer.innerHTML = `
+          <div class="auth-welcome">
+            <img src="https://i.ibb.co/pvmJX8pm/output-onlinepngtools.png" alt="Seeker Logo" class="logo">
+            <p class="descriptionauth">
+              Please register or login to use our advanced search query tool, save up to 50% of your time by finding the results you came for.<br><br>
+              Need help? Reach out <a class="color" href="#">here</a>.
+            </p>
+            <div class="auth-buttons">
+              <button id="showLogin" class="auth-btn primary">Login</button>
+              <button id="showRegister" class="auth-btn secondary">Register</button>
+            </div>
+          </div>
+        `;
+        
+        document.getElementById('showLogin').addEventListener('click', showLoginForm);
+        document.getElementById('showRegister').addEventListener('click', showRegisterForm);
+        document.getElementById('loginBtn').addEventListener('click', showLoginForm);
+        document.getElementById('registerBtn').addEventListener('click', showRegisterForm);
+      }
+    }
+
+    function showLoginForm() {
+      const modal = document.getElementById('authModal');
+      const modalContent = document.getElementById('modalContent');
+      
+      modalContent.innerHTML = `
+        <h2>Login to Seeker</h2>
+        <br>
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" required>
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" required>
+          </div>
+          <button type="submit" class="auth-btn primary">Login</button>
+        </form>
+      `;
+      
+      modal.style.display = 'block';
+      
+      document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        const { loginUser, setAuthToken } = await import('./auth.js');
+        const user = await loginUser(email, password);
+        
+        if (user.error) {
+          alert(user.error);
+        } else {
+          setAuthToken(user);
+          document.getElementById('authModal').style.display = 'none';
+          updateUI(user);
+        }
+      });
+    }
+
+    function showRegisterForm() {
+      const modal = document.getElementById('authModal');
+      const modalContent = document.getElementById('modalContent');
+      
+      modalContent.innerHTML = `
+        <h2>Register for Seeker</h2>
+        <br>
+        <form id="registerForm">
+          <div class="form-group">
+            <label for="regUsername">Username</label>
+            <input type="text" id="regUsername" required>
+          </div>
+          <div class="form-group">
+            <label for="regEmail">Email</label>
+            <input type="email" id="regEmail" required>
+          </div>
+          <div class="form-group">
+            <label for="regPassword">Password</label>
+            <input type="password" id="regPassword" required>
+          </div>
+          <div class="form-group">
+            <label for="regUserType">Occupation</label>
+            <select id="regUserType" required>
+              <option value="student">Student</option>
+              <option value="academic">Academic / Researcher</option>
+              <option value="professional">Professional</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="regInstitution">Institution (optional)</label>
+            <input type="text" id="regInstitution">
+          </div>
+          <button type="submit" class="auth-btn primary">Register</button>
+        </form>
+      `;
+      
+      modal.style.display = 'block';
+      
+      document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('regUsername').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPassword').value;
+        const userType = document.getElementById('regUserType').value;
+        const institution = document.getElementById('regInstitution').value;
+        
+        const { registerUser, setAuthToken } = await import('./auth.js');
+        const user = await registerUser(username, email, password, userType, institution);
+        
+        if (user.error) {
+          alert(user.error);
+        } else {
+          setAuthToken(user);
+          document.getElementById('authModal').style.display = 'none';
+          updateUI(user);
+        }
+      });
+    }
+
+    document.querySelector('.close-modal').addEventListener('click', () => {
+      document.getElementById('authModal').style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target === document.getElementById('authModal')) {
+        document.getElementById('authModal').style.display = 'none';
+      }
     });
   </script>
 </body>
