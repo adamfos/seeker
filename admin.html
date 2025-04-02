@@ -28,10 +28,6 @@
         <div class="admin-breadcrumb">
           <span>Dashboard</span>
         </div>
-        <div class="admin-user">
-          <span>admin</span>
-          <div class="admin-avatar">A</div>
-        </div>
       </div>
       
       <div class="admin-content">
@@ -39,37 +35,37 @@
           <div class="stat-card">
             <div class="stat-icon"><i class="fas fa-users"></i></div>
             <div class="stat-info">
-              <h3>1,248</h3>
+              <h3 id="total-users">N/A</h3>
               <p>Total Users</p>
             </div>
-            <div class="stat-trend up">+12%</div>
+            <div class="stat-trend up">+0%</div>
           </div>
           
           <div class="stat-card">
             <div class="stat-icon"><i class="fas fa-search"></i></div>
             <div class="stat-info">
-              <h3>5,673</h3>
+              <h3>N/A</h3>
               <p>Searches Today</p>
             </div>
-            <div class="stat-trend up">+24%</div>
+            <div class="stat-trend up">+0%</div>
           </div>
           
           <div class="stat-card">
             <div class="stat-icon"><i class="fas fa-university"></i></div>
             <div class="stat-info">
-              <h3>87</h3>
+              <h3 id="academic-users">N/A</h3>
               <p>Academic Users</p>
             </div>
-            <div class="stat-trend down">-5%</div>
+            <div class="stat-trend down">+0%</div>
           </div>
           
           <div class="stat-card">
             <div class="stat-icon"><i class="fas fa-bug"></i></div>
             <div class="stat-info">
-              <h3>3</h3>
+              <h3>N/A</h3>
               <p>Active Issues</p>
             </div>
-            <div class="stat-trend same">0%</div>
+            <div class="stat-trend same">+0%</div>
           </div>
         </div>
         
@@ -113,21 +109,44 @@
         <div class="admin-section">
           <h2>Quick Actions</h2>
           <div class="action-buttons">
-            <button class="admin-btn primary"><i class="fas fa-user-cog"></i> Manage Users</button>
-            <button class="admin-btn secondary"><i class="fas fa-search-plus"></i> View Search Logs</button>
-            <button class="admin-btn tertiary"><i class="fas fa-tools"></i> System Settings</button>
-            <button class="admin-btn danger"><i class="fas fa-bell"></i> Send Notification</button>
+            <a href="users.html" class="admin-btn primary small" style="text-decoration: none;"><i class="fas fa-user-cog"></i> Manage Users</a>
+            <a href="settings.html" class="admin-btn secondary small" style="text-decoration: none;"><i class="fas fa-tools"></i> System Settings</a>
+            <a href="security.html" class="admin-btn danger small" style="text-decoration: none;"><i class="fas fa-shield"></i> Security</a>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <script type="module">
-    import { checkAdminAccess } from './auth.js';
-    checkAdminAccess();
+  <script>
+    document.addEventListener("DOMContentLoaded", async function () {
+    console.log("DOM loaded, fetching admin stats...");
+    try {
+        const response = await fetch("http://localhost:3000/api/admin-stats");
+        console.log("Response status:", response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log("Received data:", data);
+        
+        if (data.success) {
+            // Set total users count
+            document.getElementById("total-users").textContent = data.totalUsers.toLocaleString();
+            console.log("Set total users to:", data.totalUsers);
+            
+            // Set academic users count
+            document.getElementById("academic-users").textContent = data.academicUsers.toLocaleString();
+            console.log("Set academic users to:", data.academicUsers);
+        } else {
+            console.error("Server returned success: false");
+        }
+    } catch (error) {
+        console.error("Error fetching admin stats:", error);
+        document.getElementById("academic-users").textContent = "?";
+    }
+});
   </script>
-
-
 </body>
 </html>

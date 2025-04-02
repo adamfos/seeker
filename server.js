@@ -29,33 +29,29 @@ app.delete('/api/users/:id', async (req, res) => {
 
 app.get('/api/admin-stats', async (req, res) => {
     try {
+        console.log("Fetching admin stats...");
+        
+        // Query to count total number of users
         const totalUsersQuery = await pool.query('SELECT COUNT(*) FROM users');
-        const academicUsersQuery = await pool.query("SELECT COUNT(*) FROM users WHERE user_type = 'Academic'");
-        const recentActivityQuery = await pool.query(`
-            SELECT action, description, created_at FROM activity_log 
-            ORDER BY created_at DESC 
-            LIMIT 5
-        `);
-
-        const recentActivity = recentActivityQuery.rows.map(row => ({
-            type: row.action.includes('error') ? 'warning' : 'success',
-            icon: row.action.includes('login') ? 'fas fa-sign-in-alt' : 'fas fa-user-plus',
-            message: row.description,
-            time: new Date(row.created_at).toLocaleString()
-        }));
-
-        res.json({
+        console.log("Total users query result:", totalUsersQuery.rows[0].count);
+        
+        // Query to count academic users
+        const academicUsersQuery = await pool.query("SELECT COUNT(*) FROM users WHERE user_type = 'academic'");
+        console.log("Academic users query result:", academicUsersQuery.rows[0].count);
+        
+        const responseData = {
             success: true,
             totalUsers: parseInt(totalUsersQuery.rows[0].count, 10),
-            academicUsers: parseInt(academicUsersQuery.rows[0].count, 10),
-            recentActivity
-        });
+            academicUsers: parseInt(academicUsersQuery.rows[0].count, 10)
+        };
+        
+        console.log("Sending response:", responseData);
+        res.json(responseData);
     } catch (error) {
         console.error("Error fetching admin stats:", error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
-
 
 app.get('/api/test', async (req, res) => {
     try {

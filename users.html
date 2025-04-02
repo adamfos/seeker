@@ -28,10 +28,6 @@
         <div class="admin-breadcrumb">
           <span>Users</span>
         </div>
-        <div class="admin-user">
-          <span>admin</span>
-          <div class="admin-avatar">A</div>
-        </div>
       </div>
       
       <div class="admin-content">
@@ -41,7 +37,9 @@
               <input type="text" placeholder="Search users..." class="admin-search">
               <button class="admin-search-btn"><i class="fas fa-search"></i></button>
             </div>
-            <button class="admin-btn primary"><i class="fas fa-user-plus"></i> Add User</button>
+            <button class="admin-btn primary" onclick="location.reload();">
+              <i class="fas fa-sync-alt"></i> Refresh Users
+          </button>
           </div>
           
           <div class="admin-table-container">
@@ -131,7 +129,7 @@
 
                 const row = document.createElement("tr");
                 row.innerHTML = `
-                    <td>#${user.user_id}</td>
+                    <td><code>#${user.user_id}</code></td>
                     <td>${user.username}</td>
                     <td>${user.email}</td>
                     <td><span class="badge ${user.user_type.toLowerCase()}">${icon} ${user.user_type}</span></td>
