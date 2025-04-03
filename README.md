@@ -34,6 +34,10 @@
 
 # 1. Ladda ner filerna och installera dependencies
 
-# 2. Kör node server.js (eller fin filmapp)
+# 2. Kör "npm install express"
 
-# 3. Kör index manuellt eller via webserver när det inte är lokalt
+# 3. Kör "npm install pg"
+
+# 4. Kör node server.js (eller fin filmapp)
+
+# 5. Kör index manuellt eller via webserver när det inte är lokalt
