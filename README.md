@@ -28,12 +28,19 @@
 - Node.js 16+
 - PostgreSQL 12+
 - Git
+- body-parser
+- cors
+- dotenv
+- jsonwebtoken
+- bcryptjs
 
 ### Steg-för-steg
 ```bash
 
 # 1. Ladda ner filerna och installera dependencies
 
-# 2. Kör node server.js (eller fin filmapp)
+# 2. Kör "npm install express pg body-parser cors dotenv jsonwebtoken bcryptjs"
 
-# 3. Kör index manuellt eller via webserver när det inte är lokalt
+# 3. Kör node server.js (eller fin filmapp)
+
+# 4. Kör index manuellt eller via webserver när det inte är lokalt
