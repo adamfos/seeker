@@ -35,9 +35,9 @@
 # 1. Ladda ner filerna och installera dependencies
 
 # 2. Kör "npm install express"
+# 2. Kör "npm install pg"
+# 2. Kör "npm install @google/generative-ai"
 
-# 3. Kör "npm install pg"
+# 3. Kör node server.js (eller fin filmapp)
 
-# 4. Kör node server.js (eller fin filmapp)
-
-# 5. Kör index manuellt eller via webserver när det inte är lokalt
+# 4. Kör index manuellt eller via webserver när det inte är lokalt
