@@ -12,7 +12,7 @@ export async function generateOptimizedSearchString(userInput) {
       const genAI = new GoogleGenerativeAI("AIzaSyDUKqB7lxvOHTSKPoQt78SwNZMqhirNwf4");
       
       // Use the correct model name
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
   
       const result = await model.generateContent(promptText);
       const response = await result.response;
