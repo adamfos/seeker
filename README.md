@@ -24,7 +24,7 @@
 
 ## Installation
 
-### Dependencies
+### Dependencies (lokalt)
 - Node.js 16+
 - PostgreSQL 12+
 - Git
@@ -43,4 +43,4 @@
 
 # 3. Kör node server.js (eller fin filmapp)
 
-# 4. Kör index manuellt eller via webserver när det inte är lokalt
+# 4. Kör index.html manuellt eller via webserver när det inte är lokalt
