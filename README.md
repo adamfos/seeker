@@ -24,7 +24,7 @@
 
 ## Installation
 
-### Dependencies
+### Dependencies (lokalt)
 - Node.js 16+
 - PostgreSQL 12+
 - Git
@@ -39,8 +39,10 @@
 
 # 1. Ladda ner filerna och installera dependencies
 
-# 2. Kör "npm install express pg body-parser cors dotenv jsonwebtoken bcryptjs"
+# 2. Kör "npm install express pg body-parser cors dotenv jsonwebtoken bcryptjs" (om nödvändigt)
 
-# 3. Kör node server.js (eller fin filmapp)
+# 3. Öppna MAPPEN i Visual Studio Code
 
-# 4. Kör index manuellt eller via webserver när det inte är lokalt
+# 3. Kör "node .\assets\js\server.js" (relativ till din filmapp)
+
+# 4. Kör index.html via live webserver (när det inte är lokalt)
