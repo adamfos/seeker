@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Seeker</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href=".\assets\css\styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="icon" href="assets/img/seeker.png">
@@ -30,7 +30,7 @@
   </div>
 
   <script type="module">
-    import { getAuthToken, logout } from './auth.js';
+    import { getAuthToken, logout } from './assets/js/auth.js';
 
     document.addEventListener('DOMContentLoaded', () => {
       const authToken = getAuthToken();
@@ -136,7 +136,7 @@
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
         
-        const { loginUser, setAuthToken } = await import('./auth.js');
+        const { loginUser, setAuthToken } = await import('./assets/js/auth.js');
         const user = await loginUser(email, password);
         
         if (user.error) {
@@ -195,7 +195,7 @@
         const userType = document.getElementById('regUserType').value;
         const institution = document.getElementById('regInstitution').value;
         
-        const { registerUser, setAuthToken } = await import('./auth.js');
+        const { registerUser, setAuthToken } = await import('./assets/js/auth.js');
         const user = await registerUser(username, email, password, userType, institution);
         
         if (user.error) {
