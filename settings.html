@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seeker » Settings</title>
+  <link rel="stylesheet" href=".\assets\css\styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="icon" href="assets/img/seeker.png">
+</head>
+<body>
+  <div class="admin-container">
+    <div class="admin-sidebar">
+      <nav class="admin-nav">
+        <a href="admin.html" class="admin-nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="users.html" class="admin-nav-link"><i class="fas fa-users"></i> Users</a>
+        <a href="#" class="admin-nav-link active"><i class="fas fa-cog"></i> Settings</a>
+        <a href="security.html" class="admin-nav-link"><i class="fas fa-shield-alt"></i> Security</a>
+      </nav>
+      <div class="admin-footer">
+        <a href="index.html" class="admin-nav-link"><i class="fas fa-sign-out-alt"></i> Exit</a>
+      </div>
+    </div>
+    
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-breadcrumb">
+          <span>Settings</span>
+        </div>
+        <div class="admin-user">
+          <span>admin</span>
+          <div class="admin-avatar">A</div>
+        </div>
+      </div>
+      
+      <div class="admin-content">
+        <div class="settings-tabs">
+          <div class="settings-tab active" data-tab="general">General</div>
+          <div class="settings-tab" data-tab="search">Search</div>
+          <div class="settings-tab" data-tab="notifications">Notifications</div>
+          <div class="settings-tab" data-tab="api">API</div>
+          <div class="settings-tab" data-tab="maintenance">Maintenance</div>
+        </div>
+        
+        <div class="settings-content active" id="general">
+          <form class="settings-form">
+            <div class="form-group">
+              <label>Application Name</label>
+              <input type="text" value="Seeker" class="admin-input">
+            </div>
+            
+            <div class="form-group">
+              <label>Description</label>
+              <textarea class="admin-textarea">Seeker generates advanced Google search strings to help you find precise information effortlessly. Designed for students and researchers.</textarea>
+            </div>
+            
+            <div class="form-group">
+              <label>Default Theme</label>
+              <select class="admin-select">
+                <option selected>Dark</option>
+                <option>Light</option>
+                <option>System</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label>User Registration</label>
+              <div class="form-checkbox">
+                <input type="checkbox" id="allow-registration" checked>
+                <label for="allow-registration">Allow new user registration</label>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label>Maintenance Mode</label>
+              <div class="form-checkbox">
+                <input type="checkbox" id="maintenance-mode">
+                <label for="maintenance-mode">Enable maintenance mode</label>
+              </div>
+            </div>
+            
+            <div class="form-actions">
+              <button type="button" class="admin-btn secondary">Reset</button>
+              <button type="submit" class="admin-btn primary">Save Changes</button>
+            </div>
+          </form>
+        </div>
+        
+        <div class="settings-content" id="search">
+          <form class="settings-form">
+            <div class="form-group">
+              <label>Default Search Engine</label>
+              <select class="admin-select">
+                <option selected>Google</option>
+                <option>Google Scholar</option>
+                <option>Both</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label>Search Filters</label>
+              <div class="form-checkbox">
+                <input type="checkbox" id="filter-date" checked>
+                <label for="filter-date">Enable date filtering</label>
+              </div>
+              <div class="form-checkbox">
+                <input type="checkbox" id="filter-filetype" checked>
+                <label for="filter-filetype">Enable file type filtering</label>
+              </div>
+              <div class="form-checkbox">
+                <input type="checkbox" id="filter-site" checked>
+                <label for="filter-site">Enable site/domain filtering</label>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label>Default Search Parameters</label>
+              <textarea class="admin-textarea">site:.edu OR site:.gov filetype:pdf after:2018</textarea>
+              <p class="form-help">These parameters will be added by default to academic searches</p>
+            </div>
+            
+            <div class="form-actions">
+              <button type="button" class="admin-btn secondary">Reset</button>
+              <button type="submit" class="admin-btn primary">Save Changes</button>
+            </div>
+          </form>
+        </div>
+        
+        <div class="settings-content" id="notifications">
+          <form class="settings-form">
+            <div class="form-group">
+              <label>Email Notifications</label>
+              <div class="form-checkbox">
+                <input type="checkbox" id="notify-new-user" checked>
+                <label for="notify-new-user">Notify admins on new user registration</label>
+              </div>
+              <div class="form-checkbox">
+                <input type="checkbox" id="notify-failed-login" checked>
+                <label for="notify-failed-login">Notify on multiple failed login attempts</label>
+              </div>
+              <div class="form-checkbox">
+                <input type="checkbox" id="notify-system">
+                <label for="notify-system">Notify on system events</label>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label>Notification Email Address</label>
+              <input type="email" value="admin@seeker.example.com" class="admin-input">
+            </div>
+            
+            <div class="form-group">
+              <label>User Welcome Email</label>
+              <div class="form-checkbox">
+                <input type="checkbox" id="welcome-email" checked>
+                <label for="welcome-email">Send welcome email to new users</label>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label>Welcome Email Template</label>
+              <textarea class="admin-textarea" rows="6">Welcome to Seeker!
+
+Thank you for registering. Seeker helps you create advanced Google search strings to find precise information quickly.
+
+Getting started:
+1. Enter your search query
+2. Refine using our filters
+3. Copy the generated search string
+
+Happy searching!
+The Seeker Team</textarea>
+            </div>
+            
+            <div class="form-actions">
+              <button type="button" class="admin-btn secondary">Reset</button>
+              <button type="submit" class="admin-btn primary">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
