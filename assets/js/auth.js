@@ -1,4 +1,8 @@
-const DATABASE_URL = 'postgresql://ao7079:908c2sis@pgserver.mau.se:5432/seeker';
+import dotenv from 'dotenv'
+import fetch from 'node-fetch';
+dotenv.config();
+
+const DATABASE_URL = process.env.DATABASE_URL; // Use database URL from environment variable
 
 async function executeQuery(query, params = []) {
     try {
