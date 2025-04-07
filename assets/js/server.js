@@ -1,10 +1,12 @@
 const express = require('express');
 const { Pool } = require('pg');
+const dotenv = require('dotenv'); // Load environment variables from .env file
+dotenv.config(); // Load environment variables from .env file
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 const pool = new Pool({
-    connectionString: 'postgresql://ao7079:908c2sis@pgserver.mau.se:5432/seeker',
+    connectionString: process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false }
 });
 
