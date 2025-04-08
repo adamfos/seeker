@@ -26,11 +26,6 @@
 
 ### Konfiguration av miljövariabler
 - Projektet använder en .env-fil för att lagra känslig information som databasuppgifter och API-nycklar.
-- Steg för att konfigurera .env-filen:
-- Hitta filen som heter credential.env
-- Byt namn på filen till bara .env:
-- Placera .env-filen i seeker-mappen (projektets rotmapp).
-- Se till att .env-filen innehåller rätt uppgifter.
 
 ### Dependencies (lokalt)
 - Node.js 16+
