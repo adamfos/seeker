@@ -25,7 +25,7 @@
 ## Installation
 
 ### Konfiguration av miljövariabler
-- Projektet använder en .env-fil för att lagra känslig information som databasuppgifter och API-nycklar.
+- Projektet använder .env-filer för att lagra känslig information som databasuppgifter och API-nycklar.
 
 ### Dependencies (lokalt)
 - Node.js 16+
