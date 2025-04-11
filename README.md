@@ -2,7 +2,7 @@
 
 ![Seeker Logo](https://i.ibb.co/pvmJX8pm/output-onlinepngtools.png)
 
-> **Version:** 1.0.0  
+> **Version:** 1.4.1  
 > **Repository:** [adamfos/seeker](https://github.com/adamfos/seeker)  
 > **Teknologier:** Node.js, Express, PostgreSQL, Vanilla JS
 
