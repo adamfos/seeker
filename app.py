@@ -11,7 +11,7 @@ load_dotenv()
 # Initialize Flask app
 app = Flask(__name__)
 FLASK_API_URL = os.getenv("FLASK_API_URL")  # Make sure this is set in your .env file
-CORS(app)
+return render_template('index.html', api_url=api_url)
 
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
