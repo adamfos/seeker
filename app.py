@@ -10,7 +10,7 @@ load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
-FLASK_API_URL = os.getenv("FLASK_API_URL")
+FLASK_API_URL = os.getenv("FLASK_API_URL")  # Make sure this is set in your .env file
 CORS(app)
 
 # Database configuration
