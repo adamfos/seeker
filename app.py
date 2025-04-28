@@ -1,9 +1,10 @@
-from flask import Flask, request, jsonify, render_template, url_for
+from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import os
 import requests
 from dotenv import load_dotenv
+from search import generate_optimized_search_string  # Import from search.py
 
 # Load environment variables
 load_dotenv()
@@ -62,41 +63,15 @@ def generate_search():
     if not search_query:
         return jsonify({"error": "Missing 'search' field"}), 400
 
-    # Optional Gemini API connection
-    gemini_api_key = os.getenv('GEMINI_API_KEY')
-    gemini_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
+    # Use the function from search.py to generate the optimized search string
+    result = generate_optimized_search_string(search_query)
 
-    headers = {"Content-Type": "application/json"}
-    payload = {
-        "contents": [
-            {
-                "parts": [{"text": search_query}]
-            }
-        ]
-    }
-
-    gemini_response_text = ""
-
-    try:
-        gemini_response = requests.post(f"{gemini_url}?key={gemini_api_key}", headers=headers, json=payload)
-        if gemini_response.status_code == 200:
-            gemini_data = gemini_response.json()
-            gemini_response_text = gemini_data['candidates'][0]['content']['parts'][0]['text']
-        else:
-            gemini_response_text = "Gemini API error"
-    except Exception as e:
-        print(f"Gemini error: {e}")
-        gemini_response_text = "Gemini connection failed"
-
-    # Save search query to database
+    # Save the search query to the database
     new_search = Search(query=search_query)
     db.session.add(new_search)
     db.session.commit()
 
-    return jsonify({
-        "original_query": search_query,
-        "gemini_response": gemini_response_text
-    })
+    return jsonify(result)  # Return the result from search.py (optimized search string)
 
 @app.route('/api/admin-stats', methods=['GET'])
 def admin_stats():
