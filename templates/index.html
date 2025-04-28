@@ -40,7 +40,17 @@
         document.querySelector(".userbar-links").classList.toggle("active");
       });
     });
-  
+    // Use Jinja templating to inject the Flask API URL passed from the backend
+    const apiUrl = "{{ api_url }}";  // This will be replaced with the value from the .env file
+
+// Fetch data from the Flask backend
+fetch(apiUrl + '/get-data')
+    .then(response => response.json())
+    .then(data => {
+        // Display the message from the Flask API
+        document.getElementById('message').innerText = data.message;
+    })
+    .catch(error => console.error('Error:', error));
     function updateUI(user) {
       const userbarLinks = document.getElementById('userbarLinks');
       const mainContent = document.getElementById('mainContent');
