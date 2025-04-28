@@ -4,13 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Seeker</title>
-  <link rel="stylesheet" href=".\assets\css\styles.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <link rel="icon" href="assets/img/seeker.png">
+  <link rel="icon" href="{{ url_for('static', filename='img/seeker.png') }}">
 </head>
 <body>
-
   <div class="userbar">
     <button class="menu-toggle"><i class="fas fa-bars"></i></button>
     <div class="userbar-links" id="userbarLinks">
@@ -30,23 +29,48 @@
   </div>
 
   <script type="module">
-    import { getAuthToken, logout } from './assets/js/auth.js';
-    import { generateOptimizedSearchString } from './assets/js/search.js';
-  
+    import { getAuthToken, logout } from './static/js/auth.js';
+
     document.addEventListener('DOMContentLoaded', () => {
       const authToken = getAuthToken();
       updateUI(authToken);
-      
+
       document.querySelector(".menu-toggle").addEventListener("click", function () {
         document.querySelector(".userbar-links").classList.toggle("active");
       });
     });
-  
+
+    // Use Jinja templating to inject the Flask API URL passed from the backend
+    const apiUrl = "{{ api_url }}";  // This will be replaced with the value from the .env file
+
+    // Fetch data from the Flask backend
+    fetch(apiUrl + '/get-data')
+      .then(response => response.json())
+      .then(data => {
+        // Display the message from the Flask API
+        document.getElementById('message').innerText = data.message;
+      })
+      .catch(error => console.error('Error:', error));
+
+    // Fetch search results from backend
+    async function fetchSearchResult(query) {
+      const response = await fetch('/generate-search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userInput: query })
+      });
+
+      const data = await response.json();
+      document.getElementById('message').innerText = data.searchString; // Display result from the API
+    }
+
     function updateUI(user) {
       const userbarLinks = document.getElementById('userbarLinks');
       const mainContent = document.getElementById('mainContent');
       const authContainer = document.getElementById('authContainer');
-      
+
       if (user) {
         // Start with base links for all logged-in users
         let linksHTML = `
@@ -54,20 +78,20 @@
           <a href="#" class="userbar-link"><i class="fas fa-search"></i> My Searches</a>
           <a href="#" class="userbar-link"><i class="fas fa-cog"></i> Settings</a>
         `;
-        
+
         // Add Admin Panel link if user is admin
         if (user.is_admin) {
           linksHTML += `
             <a href="admin.html" class="userbar-link"><i class="fas fa-shield-halved"></i> Admin Panel</a>
           `;
         }
-        
+
         linksHTML += `
           <a href="#" id="logoutBtn" class="userbar-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
         `;
-        
+
         userbarLinks.innerHTML = linksHTML;
-        
+
         mainContent.innerHTML = `
           <img src="https://i.ibb.co/pvmJX8pm/output-onlinepngtools.png" alt="Seeker Logo" class="logo">
           <div class="search-container">
@@ -81,18 +105,18 @@
             Alternative: <a class="color" href="#">Manual Search</a>
           </p>
         `;
-        
+
         document.getElementById('logoutBtn').addEventListener('click', logout);
-        
+
         // Setup search functionality
         setupSearch();
-        
+
       } else {
         userbarLinks.innerHTML = `
           <a href="#" id="loginBtn" class="userbar-link"><i class="fas fa-sign-in-alt"></i> Login</a>
           <a href="#" id="registerBtn" class="userbar-link"><i class="fas fa-user-plus"></i> Register</a>
         `;
-        
+
         authContainer.innerHTML = `
           <div class="auth-welcome">
             <img src="https://i.ibb.co/pvmJX8pm/output-onlinepngtools.png" alt="Seeker Logo" class="logo">
@@ -106,28 +130,28 @@
             </div>
           </div>
         `;
-        
+
         document.getElementById('showLogin').addEventListener('click', showLoginForm);
         document.getElementById('showRegister').addEventListener('click', showRegisterForm);
         document.getElementById('loginBtn').addEventListener('click', showLoginForm);
         document.getElementById('registerBtn').addEventListener('click', showRegisterForm);
       }
     }
-  
+
     function setupSearch() {
       const searchButton = document.getElementById('search-button');
       const searchBox = document.getElementById('search-box');
       const searchResults = document.getElementById('search-results');
-      
+
       const handleSearch = async () => {
         const query = searchBox.value.trim();
         if (!query) {
           searchResults.innerHTML = '<p class="error">Please enter a search query</p>';
           return;
         }
-        
+
         searchResults.innerHTML = '<p class="loading">Generating optimized search string...</p>';
-        
+
         try {
           const result = await generateOptimizedSearchString(query);
           if (result.error) {
@@ -147,7 +171,7 @@
                 </div>
               </div>
             `;
-            
+
             // Add copy functionality
             document.getElementById('copy-button').addEventListener('click', () => {
               navigator.clipboard.writeText(result.searchString)
@@ -167,7 +191,7 @@
           searchResults.innerHTML = `<p class="error">An error occurred: ${error.message}</p>`;
         }
       };
-      
+
       searchButton.addEventListener('click', handleSearch);
       searchBox.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
@@ -175,11 +199,11 @@
         }
       });
     }
-  
+
     function showLoginForm() {
       const modal = document.getElementById('authModal');
       const modalContent = document.getElementById('modalContent');
-      
+
       modalContent.innerHTML = `
         <h2>Login to Seeker</h2>
         <br>
@@ -195,17 +219,17 @@
           <button type="submit" class="auth-btn primary">Login</button>
         </form>
       `;
-      
+
       modal.style.display = 'block';
-      
+
       document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
-        
+
         const { loginUser, setAuthToken } = await import('./assets/js/auth.js');
         const user = await loginUser(email, password);
-        
+
         if (user.error) {
           alert(user.error);
         } else {
@@ -215,11 +239,11 @@
         }
       });
     }
-  
+
     function showRegisterForm() {
       const modal = document.getElementById('authModal');
       const modalContent = document.getElementById('modalContent');
-      
+
       modalContent.innerHTML = `
         <h2>Register for Seeker</h2>
         <br>
@@ -251,9 +275,9 @@
           <button type="submit" class="auth-btn primary">Register</button>
         </form>
       `;
-      
+
       modal.style.display = 'block';
-      
+
       document.getElementById('registerForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const username = document.getElementById('regUsername').value;
@@ -261,10 +285,10 @@
         const password = document.getElementById('regPassword').value;
         const userType = document.getElementById('regUserType').value;
         const institution = document.getElementById('regInstitution').value;
-        
+
         const { registerUser, setAuthToken } = await import('./assets/js/auth.js');
         const user = await registerUser(username, email, password, userType, institution);
-        
+
         if (user.error) {
           alert(user.error);
         } else {
@@ -274,11 +298,11 @@
         }
       });
     }
-  
+
     document.querySelector('.close-modal').addEventListener('click', () => {
       document.getElementById('authModal').style.display = 'none';
     });
-  
+
     window.addEventListener('click', (e) => {
       if (e.target === document.getElementById('authModal')) {
         document.getElementById('authModal').style.display = 'none';
