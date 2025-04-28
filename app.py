@@ -4,7 +4,7 @@ from flask_cors import CORS
 import os
 import requests
 from dotenv import load_dotenv
-from search import generate_optimized_search_string  # Import from search.py
+from search import generate_optimized_search_string  
 
 # Load environment variables
 load_dotenv()
