@@ -1,9 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from flask import render_template
-import os
-import requests
 from dotenv import load_dotenv
 from search import generate_optimized_search_string  
 
@@ -36,10 +33,6 @@ with app.app_context():
 def homepage():
     # Pass environment variable to frontend
     return render_template('index.html', api_url=FLASK_API_URL)
-
-@app.route('/', methods=['GET'])
-def homepage():
-    return render_template('index.html')
 
 @app.route('/admin', methods=['GET'])
 def admin_page():
