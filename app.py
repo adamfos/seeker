@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask import render_template
 import os
 import requests
 from dotenv import load_dotenv
@@ -11,6 +12,7 @@ load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
+FLASK_API_URL = os.getenv("FLASK_API_URL")
 CORS(app)
 
 # Database configuration
@@ -30,6 +32,10 @@ with app.app_context():
     db.create_all()
 
 # ======== Frontend Routes ========
+@app.route('/')
+def homepage():
+    # Pass environment variable to frontend
+    return render_template('index.html', api_url=FLASK_API_URL)
 
 @app.route('/', methods=['GET'])
 def homepage():
