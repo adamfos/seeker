@@ -1,6 +1,9 @@
-import dotenv from 'dotenv';
-dotenv.config();
 // assets/js/search.js
+async function getGoogleApiKey() {
+    const response = await fetch('/api/config/google-api-key');
+    const data = await response.json();
+    return data.apiKey;
+}
 export async function generateOptimizedSearchString(userInput) {
     if (!userInput.trim()) {
       return { error: "No input provided." };
@@ -11,7 +14,8 @@ export async function generateOptimizedSearchString(userInput) {
     try {
       // Load the Google AI library from CDN
       const { GoogleGenerativeAI } = await import('https://esm.run/@google/generative-ai');
-      const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+      const apiKey = await getGoogleApiKey();
+      const genAI = new GoogleGenerativeAI(apiKey);
       
       // Use the correct model name
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });

@@ -1,12 +1,8 @@
-import dotenv from 'dotenv'
-import fetch from 'node-fetch';
-dotenv.config();
-
-const DATABASE_URL = process.env.DATABASE_URL; // Use database URL from environment variable
+const BASE_API_URL = '/api/db';
 
 async function executeQuery(query, params = []) {
     try {
-        const response = await fetch('http://localhost:3000/api/db', {
+        const response = await fetch(BASE_API_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -24,7 +20,7 @@ async function executeQuery(query, params = []) {
 
 export async function registerUser(username, email, password, userType, institution = '') {
     const checkUser = await executeQuery(
-        'SELECT * FROM users WHERE email = $1 OR username = $2', 
+        'SELECT * FROM users WHERE email = %s OR username = %s', 
         [email, username]
     );
     
@@ -34,7 +30,7 @@ export async function registerUser(username, email, password, userType, institut
 
     const result = await executeQuery(
         `INSERT INTO users (username, email, password_hash, user_type, institution, registration_date)
-         VALUES ($1, $2, $3, $4, $5, NOW())
+         VALUES (%s, %s, %s, %s, %s, NOW())
          RETURNING user_id, username, email, user_type`,
         [username, email, password, userType, institution]
     );
@@ -48,7 +44,7 @@ export async function loginUser(email, password) {
                 CASE WHEN a.admin_id IS NOT NULL THEN true ELSE false END as is_admin
          FROM users u
          LEFT JOIN admin_users a ON u.user_id = a.user_id
-         WHERE u.email = $1 AND u.password_hash = $2`,
+         WHERE u.email = %s AND u.password_hash = %s`,
         [email, password]
     );
     
