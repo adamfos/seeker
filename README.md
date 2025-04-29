@@ -4,7 +4,7 @@
 
 > **Version:** 1.4.1  
 > **Repository:** [adamfos/seeker](https://github.com/adamfos/seeker)  
-> **Teknologier:** Node.js, Express, PostgreSQL, Vanilla JS
+> **Teknologier:**Python (Flask), PostgreSQL, Vanilla JS
 
 ## Innehållsförteckning
 - [Funktioner](#-funktioner)
@@ -36,16 +36,21 @@
 - dotenv
 - jsonwebtoken
 - bcryptjs
+- Python 3.10+
+- PostgreSQL 12+
+- psycopg2
+- Flask
 
 ### Steg-för-steg
 ```bash
 
 # 1. Ladda ner filerna och installera dependencies
 
-# 2. Kör "npm install express pg body-parser cors dotenv jsonwebtoken bcryptjs" (om nödvändigt)
+# Sätt upp din .env-fil med DATABASE_URL och GOOGLE_API_KEY
+
 
 # 3. Öppna MAPPEN i Visual Studio Code
 
-# 3. Kör "node .\assets\js\server.js" (relativ till din filmapp)
+# 3.Kör backend-servern:python3 Server.py
 
 # 4. Kör index.html via live webserver (när det inte är lokalt)
