@@ -221,6 +221,7 @@ function showRegisterForm() {
     if (user.error) {
         alert(user.error);
     } else {
+        alert('Registration was successful!');
         setAuthToken(user);
         closeModal();
         updateUI(user);

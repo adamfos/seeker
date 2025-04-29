@@ -35,7 +35,13 @@ export async function registerUser(username, email, password, userType, institut
         [username, email, password, userType, institution]
     );
 
-    return result.rows ? result.rows[0] : { error: 'Registration failed' };
+    if (result.rows && result.rows.length > 0) {
+        return result.rows[0];
+    }
+    if (result.success) {
+        return { success: true, message: 'Registration was successful' };
+    }
+    return { error: 'Registration failed' };
 }
 
 export async function loginUser(email, password) {
