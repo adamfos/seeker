@@ -107,25 +107,31 @@ def admin_stats():
 @app.route('/api/db', methods=['POST'])
 def db_query():
     try:
-        data = request.get_json()  # Get query and parameters from the request body
-        query = data.get('query')
+        data   = request.get_json()
+        query  = data.get('query', '')
         params = data.get('params', [])
 
-        # Automatically replace any $1, $2, etc. with %s for psycopg2 compatibility
+        # swap $1, $2… for %s
         for i in range(1, len(params) + 1):
             query = query.replace(f"${i}", "%s")
 
-        cursor.execute(query, params)  # Execute the query
-        if query.strip().upper().startswith('SELECT'):  # If it's a SELECT query
-            result = cursor.fetchall()
-            return jsonify({ 'rows': result })
-        else:  # For other queries (INSERT, UPDATE, DELETE)
+        cursor.execute(query, params)
+
+        # normalize & detect returning
+        upper = query.strip().upper()
+        if upper.startswith('SELECT') or 'RETURNING' in upper:
+            rows = cursor.fetchall()
             conn.commit()
-            return jsonify({ 'success': True, 'rowCount': cursor.rowcount })
+            return jsonify({ 'rows': rows })
+
+        # non‐select, non‐returning
+        conn.commit()
+        return jsonify({ 'success': True, 'rowCount': cursor.rowcount })
+
     except Exception as e:
         conn.rollback()
-        print('Database error:', e)
-        return jsonify({ 'success': False, 'error': str(e) })
+        app.logger.error('Database error: %s', e)
+        return jsonify({ 'success': False, 'error': str(e) }), 400
 
 # Provide the Google API key to the frontend
 @app.route('/api/config/google-api-key', methods=['GET'])
