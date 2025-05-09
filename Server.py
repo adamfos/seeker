@@ -1,5 +1,5 @@
-from flask import Flask, send_from_directory, jsonify, request
-import psycopg2
+from flask import Flask, send_from_directory, jsonify, request, make_response
+from db import conn  # Import the reusable database connection from db.py
 import os
 from dotenv import load_dotenv
 
@@ -14,26 +14,6 @@ app = Flask(__name__, static_folder='assets', static_url_path='/assets')
 
 # Get the port number from environment variables (default to 3000)
 PORT = int(os.getenv('PORT', 3000))
-
-# Get database connection details from environment variables
-DATABASE_URL = os.getenv('DATABASE_URL')
-
-# Parse the DATABASE_URL into components
-DATABASE_URL = DATABASE_URL.replace('postgresql://', '')  # Remove prefix
-user_pass, host_port_db = DATABASE_URL.split('@')  # Split user info and host info
-user, password = user_pass.split(':')  # Split username and password
-host_port, database = host_port_db.split('/')  # Split host and database name
-host, port = host_port.split(':')  # Split host and port
-
-# Connect to the PostgreSQL database
-conn = psycopg2.connect(
-    database=database,
-    user=user,
-    password=password,
-    host=host,
-    port=port
-)
-cursor = conn.cursor()
 
 # Enable Cross-Origin Resource Sharing (CORS) for all routes
 @app.after_request
@@ -60,32 +40,27 @@ def serve_page(filename):
 
 # === API Endpoints ===
 
-# Test the database connection
-@app.route('/api/test', methods=['GET'])
-def test_db():
-    try:
-        cursor.execute('SELECT NOW()')  # Get the current time from the database
-        result = cursor.fetchone()
-        return jsonify({ 'success': True, 'time': result[0] })
-    except Exception as e:
-        print('Database test error:', e)
-        return jsonify({ 'success': False, 'error': str(e) })
 
 # Delete a user by ID
 @app.route('/api/users/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
     try:
+        cursor = conn.cursor()
         cursor.execute('DELETE FROM users WHERE user_id = %s', (user_id,))
         conn.commit()  # Save changes to the database
-        return jsonify({ 'success': cursor.rowcount > 0 })  # Check if a row was deleted
+        return jsonify({'success': cursor.rowcount > 0})  # Check if a row was deleted
     except Exception as e:
         print('Delete user error:', e)
-        return jsonify({ 'success': False, 'error': str(e) })
+        return jsonify({'success': False, 'error': str(e)})
+    finally:
+        cursor.close()
 
 # Get admin statistics (total users and academic users)
 @app.route('/api/admin-stats', methods=['GET'])
 def admin_stats():
     try:
+        cursor = conn.cursor()
+
         # Get total number of users
         cursor.execute('SELECT COUNT(*) FROM users')
         total_users = cursor.fetchone()[0]
@@ -101,13 +76,16 @@ def admin_stats():
         })
     except Exception as e:
         print('Error fetching admin stats:', e)
-        return jsonify({ 'success': False, 'error': str(e) })
+        return jsonify({'success': False, 'error': str(e)})
+    finally:
+        cursor.close()
 
 # Execute a general database query
 @app.route('/api/db', methods=['POST'])
 def db_query():
+  cursor = conn.cursor()
     try:
-        data   = request.get_json()
+  data   = request.get_json()            # Get query + params
         query  = data.get('query', '')
         params = data.get('params', [])
 
@@ -115,16 +93,14 @@ def db_query():
         for i in range(1, len(params) + 1):
             query = query.replace(f"${i}", "%s")
 
-        cursor.execute(query, params)
-
-        # normalize & detect returning
-        upper = query.strip().upper()
+        cursor.execute(query, params)  # Execute the query
+       upper = query.strip().upper()
         if upper.startswith('SELECT') or 'RETURNING' in upper:
             rows = cursor.fetchall()
             conn.commit()
             return jsonify({ 'rows': rows })
 
-        # non‐select, non‐returning
+        # Otherwise (INSERT/UPDATE/DELETE without RETURNING)
         conn.commit()
         return jsonify({ 'success': True, 'rowCount': cursor.rowcount })
 
@@ -133,10 +109,13 @@ def db_query():
         app.logger.error('Database error: %s', e)
         return jsonify({ 'success': False, 'error': str(e) }), 400
 
+    finally:
+        cursor.close()
+
 # Provide the Google API key to the frontend
 @app.route('/api/config/google-api-key', methods=['GET'])
 def get_google_api_key():
-    return jsonify({ 'apiKey': GOOGLE_API_KEY })
+    return jsonify({'apiKey': GOOGLE_API_KEY})
 
 # Run the Flask server
 if __name__ == '__main__':
