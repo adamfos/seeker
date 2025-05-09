@@ -2,6 +2,8 @@ from flask import Flask, send_from_directory, jsonify, request
 import psycopg2
 import os
 from dotenv import load_dotenv
+from searches import save_search
+
 
 # Load environment variables from .env file
 load_dotenv()
@@ -33,6 +35,7 @@ conn = psycopg2.connect(
     host=host,
     port=port
 )
+
 cursor = conn.cursor()
 
 # Enable Cross-Origin Resource Sharing (CORS) for all routes
