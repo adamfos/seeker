@@ -1,4 +1,4 @@
-const BASE_API_URL = '/api/db';
+const BASE_API_URL = 'http://127.0.0.1:3000/api/db';
 
 async function executeQuery(query, params = []) {
     try {
