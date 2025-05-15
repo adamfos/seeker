@@ -1,8 +1,10 @@
-from flask import Flask, send_from_directory, jsonify, request
+from flask import Flask, send_from_directory, jsonify, request, session
 import psycopg2
 import os
 from dotenv import load_dotenv
 from searches import save_search
+
+from werkzeug.security import check_password_hash
 
 
 # Load environment variables from .env file
@@ -13,6 +15,9 @@ GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
 # Initialize Flask app and set static folder for assets
 app = Flask(__name__, static_folder='assets', static_url_path='/assets')
+
+# Secret key for session management
+app.secret_key = os.getenv('SECRET_KEY', 'your-default-secret-key')
 
 # Get the port number from environment variables (default to 3000)
 PORT = int(os.getenv('PORT', 3000))
@@ -105,6 +110,46 @@ def admin_stats():
     except Exception as e:
         print('Error fetching admin stats:', e)
         return jsonify({ 'success': False, 'error': str(e) })
+    
+# User login: verify credentials and set session
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    # Verify user with database
+    cursor = conn.cursor()
+    cursor.execute(
+        'SELECT user_id, password_hash FROM users WHERE email = %s', 
+        (email,)
+    )
+    user = cursor.fetchone()
+    cursor.close()
+    if not user:
+        return jsonify({'success': False, 'error': 'Invalid email or password'}), 401
+
+    user_id, password_hash = user
+    if not check_password_hash(password_hash, password):
+        return jsonify({'success': False, 'error': 'Invalid email or password'}), 401
+
+    # Credentials valid: store in session
+    session['user_id'] = user_id
+    return jsonify({'success': True, 'userId': user_id})
+
+@app.route('/api/check-session', methods=['GET'])
+def check_session():
+
+    user = session.get('user_id')  # Tracking the login site
+    if user:
+        return jsonify({ 'loggedIn': True })
+    else:
+        return jsonify({ 'loggedIn': False }), 401
+
+# User logout: clear session
+@app.route('/api/logout', methods=['POST'])
+def logout():
+    session.pop('user_id', None)
+    return jsonify({'success': True})
 
 # Execute a general database query
 @app.route('/api/db', methods=['POST'])
