@@ -80,6 +80,7 @@ function setupSearch() {
   const searchResults = document.getElementById('search-results');
 
   const handleSearch = async () => {
+    resetInactivityTimer();
     const query = searchBox.value.trim();
     if (!query) {
       searchResults.innerHTML = '<p class="error">Please enter a search query</p>';
@@ -228,3 +229,22 @@ function showRegisterForm() {
     }
     });
 }
+
+// Inactivity logout: if no search in 3 minutes, prompt then logout
+let inactivityTimer;
+
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(async () => {
+    const stay = confirm('You have been inactive for 3 minutes. Click OK to stay logged in or Cancel to log out.');
+    if (stay) {
+      resetInactivityTimer();
+    } else {
+      await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+      window.location.href = '/';  // adjust to new maps if needed
+    }
+  }, 3 * 60 * 1000);
+}
+
+// Start the inactivity timer when the page loads
+document.addEventListener('DOMContentLoaded', resetInactivityTimer);
