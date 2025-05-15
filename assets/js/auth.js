@@ -31,39 +31,60 @@ export async function registerUser(username, email, password, userType, institut
         return { error: 'User with this email or username already exists' };
     }
 
-    const result = await executeQuery(
-        `INSERT INTO users (username, email, password_hash, user_type, institution, registration_date)
-         VALUES (%s, %s, %s, %s, %s, NOW())
-         RETURNING user_id, username, email, user_type`,
-        [username, email, password, userType, institution]
-    );
+    try {
+        // Send the registration data to the backend
+        const response = await fetch('http://127.0.0.1:3000/api/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username,
+                email,
+                password, // Send plain text password
+                user_type: userType,
+                institution,
+            }),
+        });
 
-    if (result.error) {
-        return { error: result.error };
-    }
+        const result = await response.json();
 
-    if (result.rows && result.rows.length > 0) {
-        return result.rows[0];
-    }
-    if (result.success) {
-        return { success: true, message: 'Registration was successful' };
+        if (response.ok && result.success) {
+            return { success: true, message: 'Registration was successful' };
+        } else {
+            return { error: result.error || 'Registration failed' };
+        }
+    } catch (error) {
+        console.error('Error during registration:', error);
+        return { error: 'An error occurred during registration. Please try again.' };
     }
 }
 
 export async function loginUser(email, password) {
-    const result = await executeQuery(
-        `SELECT u.user_id, u.username, u.email, u.user_type, 
-                CASE WHEN a.admin_id IS NOT NULL THEN true ELSE false END as is_admin
-         FROM users u
-         LEFT JOIN admin_users a ON u.user_id = a.user_id
-         WHERE u.email = %s AND u.password_hash = %s`,
-        [email, password]
-    );
-    
-    if (result.rows && result.rows.length > 0) {
-        return result.rows[0];
+    try {
+        // Send login data to the backend
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email,
+                password, // Send plain text password
+            }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            return result; // Return the user data from the backend
+        } else {
+            return { error: result.error || 'Invalid email or password.' };
+        }
+    } catch (error) {
+        console.error('Error during login:', error);
+        return { error: 'An error occurred during login. Please try again.' };
     }
-    return { error: 'Invalid email or password.' };
 }
 
 export function setAuthToken(userData) {

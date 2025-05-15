@@ -3,6 +3,7 @@ import psycopg2
 import os
 from dotenv import load_dotenv
 from searches import save_search
+import bcrypt
 
 from werkzeug.security import check_password_hash
 
@@ -113,28 +114,25 @@ def admin_stats():
     
 # User login: verify credentials and set session
 @app.route('/api/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
-    # Verify user with database
-    cursor = conn.cursor()
-    cursor.execute(
-        'SELECT user_id, password_hash FROM users WHERE email = %s', 
-        (email,)
-    )
-    user = cursor.fetchone()
-    cursor.close()
-    if not user:
-        return jsonify({'success': False, 'error': 'Invalid email or password'}), 401
+def login_user():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')  # Plain text password
 
-    user_id, password_hash = user
-    if not check_password_hash(password_hash, password):
-        return jsonify({'success': False, 'error': 'Invalid email or password'}), 401
+        # Fetch the hashed password from the database
+        cursor.execute("SELECT user_id, username, password_hash FROM users WHERE email = %s", (email,))
+        user = cursor.fetchone()
 
-    # Credentials valid: store in session
-    session['user_id'] = user_id
-    return jsonify({'success': True, 'userId': user_id})
+        if user and bcrypt.checkpw(password.encode('utf-8'), user[2].encode('utf-8')):
+            # Password matches
+            return jsonify({'success': True, 'user_id': user[0], 'username': user[1]})
+        else:
+            # Invalid credentials
+            return jsonify({'success': False, 'message': 'Invalid email or password'}), 401
+    except Exception as e:
+        print('Error logging in user:', e)
+        return jsonify({'success': False, 'error': str(e)})
 
 @app.route('/api/check-session', methods=['GET'])
 def check_session():
@@ -186,6 +184,31 @@ def db_query():
 def get_google_api_key():
     return jsonify({ 'apiKey': GOOGLE_API_KEY })
 
+
+@app.route('/api/register', methods=['POST'])
+def register_user():
+    try:
+        data = request.get_json()
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')  # Plain text password
+        user_type = data.get('user_type', 'regular')  # Default to 'regular'
+
+        # Hash the password using bcrypt
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+        # Insert the user into the database
+        cursor.execute("""
+            INSERT INTO users (username, email, password_hash, user_type, registration_date)
+            VALUES (%s, %s, %s, %s, NOW())
+        """, (username, email, hashed_password, user_type))
+        conn.commit()
+
+        return jsonify({'success': True, 'message': 'User registered successfully'})
+    except Exception as e:
+        print('Error registering user:', e)
+        conn.rollback()
+        return jsonify({'success': False, 'error': str(e)})
 # Run the Flask server
 if __name__ == '__main__':
     app.run(debug=True, port=PORT)
