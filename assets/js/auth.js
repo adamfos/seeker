@@ -1,19 +1,22 @@
-const BASE_API_URL = 'http://127.0.0.1:3000/api/db';
+const BASE_API_URL = '/api/db';
 
 async function executeQuery(query, params = []) {
     try {
         const response = await fetch(BASE_API_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ query, params }),
+            credentials: 'include'
         });
         const data = await response.json();
+        if (!response.ok) {
+            // Throw an error so it’s caught below
+            throw new Error(data.error || `Server returned ${response.status}`);
+        }
         console.log('Query result:', data);
         return data;
     } catch (error) {
-        console.error('Network error:', error);
+        console.error('Network/server error:', error);
         return { error: error.message };
     }
 }
@@ -35,13 +38,16 @@ export async function registerUser(username, email, password, userType, institut
         [username, email, password, userType, institution]
     );
 
+    if (result.error) {
+        return { error: result.error };
+    }
+
     if (result.rows && result.rows.length > 0) {
         return result.rows[0];
     }
     if (result.success) {
         return { success: true, message: 'Registration was successful' };
     }
-    return { error: 'Registration failed' };
 }
 
 export async function loginUser(email, password) {
