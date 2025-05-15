@@ -20,6 +20,22 @@
   <div class="container" id="mainContent">
     <div id="authContainer">
     </div>
+
+    <!-- Search Form with Goals -->
+    <div id="searchContainer" style="display:none;">
+      <form id="searchForm">
+        <input type="text" id="searchBox" name="query" placeholder="Enter search term" required />
+        <select id="searchGoal" name="goal" required>
+          <option value="research_papers">Research Papers</option>
+          <option value="official_docs">Official Documentation</option>
+          <option value="tutorials">Tutorials</option>
+          <option value="news_articles">News Articles</option>
+          <option value="videos">Videos</option>
+        </select>
+        <button type="submit">Search</button>
+      </form>
+      <div id="searchResults"></div>
+    </div>
   </div>
 
   <div id="authModal" class="modal">
