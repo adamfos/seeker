@@ -4,7 +4,7 @@
 
 > **Version:** 1.5  
 > **Repository:** [adamfos/seeker](https://github.com/adamfos/seeker)  
-> **Teknologier:**Python (Flask), PostgreSQL, Vanilla JS
+> **Teknologier:** Python (Flask), PostgreSQL, Vanilla JS
 
 ## Innehållsförteckning
 - [Funktioner](#-funktioner)
