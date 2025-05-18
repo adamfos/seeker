@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Seeker » My Searches</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="icon" href="assets/img/seeker.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a2e0e6f91a.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="admin-container" style="flex-direction: column;">
+    <!-- Top Navigation -->
+    <header class="topbar">
+      <div class="logo-area">
+        <img src="assets/img/seeker.png" alt="Seeker Logo">
+        <a href="index.html">Seeker</a>
+      </div>
+      <nav>
+        <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
+        <a href="#" class="active"><i class="fas fa-search"></i> My Searches</a>
+        <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+      </nav>
+    </header>
+    <!-- Main content -->
+    <main class="admin-main">
+      <div class="admin-header">
+        <div class="admin-breadcrumb">
+          <span>Mina sparade sökningar</span>
+        </div>
+      </div>
+      <div class="admin-content">
+        <div class="search-card-grid">
+          <!-- Kort 1 -->
+          <div class="search-card">
+            <div>
+              <h2 class="search-title">Exempelsökning om AI</h2>
+              <p class="search-date">Sparad: 2025-05-18</p>
+              <p class="search-description">"site:gov filetype:pdf AND ethics AND bias"</p>
+            </div>
+            <div class="search-card-actions">
+              <button class="btn secondary"><i class="fas fa-pencil-alt"></i></button>
+              <button class="btn danger"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+
+          <!-- Kort 2 -->
+          <div class="search-card">
+            <div>
+              <h2 class="search-title">Sökning om klimatförändring</h2>
+              <p class="search-date">Sparad: 2025-05-17</p>
+              <p class="search-description">"site:edu filetype:pdf AND global warming"</p>
+            </div>
+            <div class="search-card-actions">
+              <button class="btn secondary"><i class="fas fa-pencil-alt"></i></button>
+              <button class="btn danger"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+
+          <!-- Kort 3 -->
+          <div class="search-card">
+            <div>
+              <h2 class="search-title">Sökning efter Python-tutorials</h2>
+              <p class="search-date">Sparad: 2025-05-16</p>
+              <p class="search-description">"intitle:python tutorial filetype:pdf"</p>
+            </div>
+            <div class="search-card-actions">
+              <button class="btn secondary"><i class="fas fa-pencil-alt"></i></button>
+              <button class="btn danger"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
