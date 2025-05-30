@@ -1,7 +1,5 @@
-import bcrypt from 'bcryptjs';
-import validator from 'validator';
+const BASE_API_URL = 'http://127.0.0.1:3000/api/db';
 
-const BASE_API_URL = '/api/db';
 
 async function executeQuery(query, params = []) {
     try {
@@ -24,10 +22,7 @@ async function executeQuery(query, params = []) {
 }
 
 export async function registerUser(username, email, password, userType, institution = '') {
-    // Validate input
-    if (!validator.isEmail(email)) {
-        return { error: 'Invalid email format' };
-    }
+
     if (password.length < 8) {
         return { error: 'Password must be at least 8 characters long' };
     }
@@ -42,8 +37,6 @@ export async function registerUser(username, email, password, userType, institut
     }
 
     try {
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
 
         // Send the registration data to the backend
         const response = await fetch('http://127.0.0.1:3000/api/register', {
@@ -54,7 +47,7 @@ export async function registerUser(username, email, password, userType, institut
             body: JSON.stringify({
                 username,
                 email,
-                password: hashedPassword, // Send hashed password
+                password: password,  // Send plain password
                 user_type: userType,
                 institution,
             }),
@@ -75,27 +68,25 @@ export async function registerUser(username, email, password, userType, institut
 
 export async function loginUser(email, password) {
     try {
-        // Fetch user data from the database
-        const result = await executeQuery(
-            `SELECT user_id, username, email, user_type, password_hash 
-             FROM users WHERE email = %s`,
-            [email]
-        );
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
 
-        if (result.rows && result.rows.length > 0) {
-            const user = result.rows[0];
-            const isPasswordValid = await bcrypt.compare(password, user.password_hash);
-            if (isPasswordValid) {
-                delete user.password_hash; // Remove sensitive data
-                return user;
-            }
+        const result = await response.json();
+
+        if (response.ok && !result.error) {
+            return result;
+        } else {
+            return { error: result.error || 'Login failed' };
         }
-        return { error: 'Invalid email or password.' };
     } catch (error) {
         console.error('Error during login:', error);
         return { error: 'An error occurred during login. Please try again.' };
     }
 }
+
 
 export function setAuthToken(userData) {
     localStorage.setItem('seeker_user', JSON.stringify(userData));
