@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
       closeModal();
     }
   });
+  resetInactivityTimer();
 });
 
 function updateUI(user) {
@@ -24,10 +25,11 @@ function updateUI(user) {
 
   if (user) {
     let linksHTML = `
-      <a href="#" class="userbar-link"><i class="fas fa-user"></i> Profile</a>
-      <a href="#" class="userbar-link"><i class="fas fa-search"></i> My Searches</a>
-      <a href="#" class="userbar-link"><i class="fas fa-cog"></i> Settings</a>
+      <a href="profile.html" class="userbar-link"><i class="fas fa-user"></i> Profile</a>
+      <a href="mysearches.html" class="userbar-link"><i class="fas fa-search"></i> My Searches</a>
+      <a href="settings.html" class="userbar-link"><i class="fas fa-cog"></i> Settings</a>
     `;
+
     if (user.is_admin) {
       linksHTML += `<a href="admin.html" class="userbar-link"><i class="fas fa-shield-halved"></i> Admin Panel</a>`;
     }
@@ -100,9 +102,58 @@ function setupSearch() {
             <div class="search-actions">
               <button id="copy-button" class="action-button"><i class="far fa-copy"></i> Copy</button>
               <a href="https://www.google.com/search?q=${encodeURIComponent(result.searchString)}" target="_blank" class="action-button"><i class="fas fa-external-link-alt"></i> Search on Google</a>
+              <button id="saveSearchBtn" class="action-button">💾 Spara sökning</button>
             </div>
           </div>
         `;
+
+document.getElementById('saveSearchBtn').addEventListener('click', async () => {
+  const user = getAuthToken();
+  console.log("Inloggad användare:", user);
+  const searchString = searchBox.value.trim();
+  const goal = document.getElementById('searchGoal')?.value;
+
+  
+
+
+  if (!user || !user.user_id) {
+    alert("Du måste vara inloggad för att spara sökningar.");
+    return;
+  }
+
+  if (!searchString) {
+    alert("Inget att spara – sökrutan är tom.");
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/save-search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        user_id: user.user_id,
+        search_string: searchString,
+        goal: goal || ""
+      })
+    });
+
+    const result = await response.json();
+    console.log("Svar från /api/save-search:", result);
+
+    if (result.success) {
+      alert("✅ Sökningen har sparats!");
+    } else {
+      alert("❌ Kunde inte spara: " + result.error);
+    }
+  } catch (error) {
+    console.error("Fel vid sparande:", error);
+    alert("Ett fel uppstod när sökningen skulle sparas.");
+  }
+});
+
+
         document.getElementById('copy-button').addEventListener('click', () => {
           navigator.clipboard.writeText(result.searchString)
             .then(() => {
@@ -122,6 +173,12 @@ function setupSearch() {
     }
   };
 
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('query')) {
+    searchBox.value = params.get('query');
+    handleSearch();
+  }
+
   searchButton.addEventListener('click', handleSearch);
   searchBox.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
@@ -129,6 +186,7 @@ function setupSearch() {
     }
   });
 }
+
 
 function closeModal() {
   document.getElementById('authModal').style.display = 'none';
@@ -245,6 +303,3 @@ function resetInactivityTimer() {
     }
   }, 3 * 60 * 1000);
 }
-
-// Start the inactivity timer when the page loads
-document.addEventListener('DOMContentLoaded', resetInactivityTimer);
