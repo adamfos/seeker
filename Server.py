@@ -205,9 +205,20 @@ def register_user():
             VALUES (%s, %s, %s, %s, %s, NOW())
         """, (username, email, hashed_password, user_type, institution))
 
-        conn.commit()
+                # 🆕 Hämta user_id direkt efter INSERT
+        cursor.execute("SELECT user_id FROM users WHERE email = %s", (email,))
+        user_id = cursor.fetchone()[0]
 
-        return jsonify({'success': True, 'message': 'User registered successfully'})
+        return jsonify({
+            'success': True,
+            'message': 'User registered successfully',
+            'user_id': user_id,
+            'username': username,
+            'email': email,
+            'user_type': user_type,
+            'institution': institution
+        })
+
     except Exception as e:
         print('Error registering user:', e)
         conn.rollback()
@@ -221,7 +232,7 @@ def save_search_route():
         search_string = data.get('search_string')
         goal = data.get('goal')
 
-        save_search(user_id, search_string, goal)
+        save_search(conn, user_id, search_string, goal)
         return jsonify({'success': True, 'message': 'Search saved successfully'})
     except Exception as e:
         print('Error saving search:', e)
@@ -230,16 +241,31 @@ def save_search_route():
 @app.route('/api/get-searches/<int:user_id>', methods=['GET'])
 def get_saved_searches(user_id):
     try:
-        cursor.execute("SELECT search_string, goal, timestamp FROM searches WHERE user_id = %s ORDER BY timestamp DESC", (user_id,))
+        cursor.execute("""
+            SELECT original_query, search_date
+            FROM searches
+            WHERE user_id = %s
+            ORDER BY search_date DESC
+        """, (user_id,))
         rows = cursor.fetchall()
-        return jsonify({'success': True, 'searches': rows})
+
+        searches = []
+        for row in rows:
+            searches.append({
+                'original_query': row[0],
+                'search_date': row[1]
+            })
+
+        return jsonify({'success': True, 'searches': searches})
     except Exception as e:
         print('Error fetching searches:', e)
-        return jsonify({'success': False, 'error': str(e)})
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 
 @app.route('/api/saved-searches/<int:user_id>', methods=['GET'])
 def get_saved_searches_full(user_id):
     try:
+        print(f"Hämtar sparade sökningar för user_id: {user_id}")
         cursor.execute("""
             SELECT ss.saved_search_id, ss.title, ss.notes, ss.saved_date,
                    s.original_query, s.generated_query, s.search_engine
@@ -265,7 +291,7 @@ def get_saved_searches_full(user_id):
         return jsonify({'success': True, 'saved_searches': searches})
     except Exception as e:
         print('Error fetching saved searches:', e)
-        return jsonify({'success': False, 'error': str(e)})
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 
