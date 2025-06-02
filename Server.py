@@ -66,8 +66,7 @@ def serve_assets(path):
 @app.route('/<path:filename>')
 def serve_page(filename):
     return send_from_directory('.', filename)
-
-# === API Endpoints ===
+  
 
 # Test the database connection
 @app.route('/api/test', methods=['GET'])
@@ -266,22 +265,105 @@ def register_user():
         email = data.get('email')
         password = data.get('password')  # Plain text password
         user_type = data.get('user_type', 'regular')  # Default to 'regular'
+        institution = data.get('institution', '') 
+
 
         # Hash the password using bcrypt
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
         # Insert the user into the database
         cursor.execute("""
-            INSERT INTO users (username, email, password_hash, user_type, registration_date)
-            VALUES (%s, %s, %s, %s, NOW())
-        """, (username, email, hashed_password, user_type))
-        conn.commit()
+            INSERT INTO users (username, email, password_hash, user_type, institution, registration_date)
+            VALUES (%s, %s, %s, %s, %s, NOW())
+        """, (username, email, hashed_password, user_type, institution))
 
-        return jsonify({'success': True, 'message': 'User registered successfully'})
+                # 🆕 Hämta user_id direkt efter INSERT
+        cursor.execute("SELECT user_id FROM users WHERE email = %s", (email,))
+        user_id = cursor.fetchone()[0]
+
+        return jsonify({
+            'success': True,
+            'message': 'User registered successfully',
+            'user_id': user_id,
+            'username': username,
+            'email': email,
+            'user_type': user_type,
+            'institution': institution
+        })
+
     except Exception as e:
         print('Error registering user:', e)
         conn.rollback()
         return jsonify({'success': False, 'error': str(e)})
+    
+@app.route('/api/save-search', methods=['POST'])
+def save_search_route():
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        search_string = data.get('search_string')
+        goal = data.get('goal')
+
+        save_search(conn, user_id, search_string, goal)
+        return jsonify({'success': True, 'message': 'Search saved successfully'})
+    except Exception as e:
+        print('Error saving search:', e)
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/get-searches/<int:user_id>', methods=['GET'])
+def get_saved_searches(user_id):
+    try:
+        cursor.execute("""
+            SELECT original_query, search_date
+            FROM searches
+            WHERE user_id = %s
+            ORDER BY search_date DESC
+        """, (user_id,))
+        rows = cursor.fetchall()
+
+        searches = []
+        for row in rows:
+            searches.append({
+                'original_query': row[0],
+                'search_date': row[1]
+            })
+
+        return jsonify({'success': True, 'searches': searches})
+    except Exception as e:
+        print('Error fetching searches:', e)
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/saved-searches/<int:user_id>', methods=['GET'])
+def get_saved_searches_full(user_id):
+    try:
+        print(f"Hämtar sparade sökningar för user_id: {user_id}")
+        cursor.execute("""
+            SELECT ss.saved_search_id, ss.title, ss.notes, ss.saved_date,
+                   s.original_query, s.generated_query, s.search_engine
+            FROM saved_searches ss
+            JOIN searches s ON ss.search_id = s.search_id
+            WHERE ss.user_id = %s
+            ORDER BY ss.saved_date DESC
+        """, (user_id,))
+        rows = cursor.fetchall()
+
+        searches = []
+        for row in rows:
+            searches.append({
+                'saved_search_id': row[0],
+                'title': row[1],
+                'notes': row[2],
+                'saved_date': row[3],
+                'original_query': row[4],
+                'generated_query': row[5],
+                'search_engine': row[6]
+            })
+
+        return jsonify({'success': True, 'saved_searches': searches})
+    except Exception as e:
+        print('Error fetching saved searches:', e)
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 # Get all users (for admin panel)
 @app.route('/api/users', methods=['GET'])
