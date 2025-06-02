@@ -16,7 +16,6 @@
         <a href="#" class="admin-nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
         <a href="users.html" class="admin-nav-link"><i class="fas fa-users"></i> Users</a>
         <a href="settings.html" class="admin-nav-link"><i class="fas fa-cog"></i> Settings</a>
-        <a href="security.html" class="admin-nav-link"><i class="fas fa-shield-alt"></i> Security</a>
       </nav>
       <div class="admin-footer">
         <a href="index.html" class="admin-nav-link"><i class="fas fa-sign-out-alt"></i> Exit</a>
@@ -38,16 +37,6 @@
               <h3 id="total-users">N/A</h3>
               <p>Total Users</p>
             </div>
-            <div class="stat-trend up">+0%</div>
-          </div>
-          
-          <div class="stat-card">
-            <div class="stat-icon"><i class="fas fa-search"></i></div>
-            <div class="stat-info">
-              <h3>N/A</h3>
-              <p>Searches Today</p>
-            </div>
-            <div class="stat-trend up">+0%</div>
           </div>
           
           <div class="stat-card">
@@ -56,97 +45,124 @@
               <h3 id="academic-users">N/A</h3>
               <p>Academic Users</p>
             </div>
-            <div class="stat-trend down">+0%</div>
           </div>
           
           <div class="stat-card">
-            <div class="stat-icon"><i class="fas fa-bug"></i></div>
+            <div class="stat-icon"><i class="fas fa-search"></i></div>
             <div class="stat-info">
-              <h3>N/A</h3>
-              <p>Active Issues</p>
-            </div>
-            <div class="stat-trend same">+0%</div>
-          </div>
-        </div>
-        
-        <div class="admin-section">
-          <h2>Recent Activity</h2>
-          <div class="activity-list">
-            <div class="activity-item">
-              <div class="activity-icon success"><i class="fas fa-user-plus"></i></div>
-              <div class="activity-details">
-                <p>New user registered: <code>researcher23@university.edu</code></p>
-                <span class="activity-time">2 minutes ago</span>
-              </div>
-            </div>
-            
-            <div class="activity-item">
-              <div class="activity-icon warning"><i class="fas fa-exclamation-triangle"></i></div>
-              <div class="activity-details">
-                <p>Failed login attempt from IP: <code>192.168.1.45</code></p>
-                <span class="activity-time">15 minutes ago</span>
-              </div>
-            </div>
-            
-            <div class="activity-item">
-              <div class="activity-icon info"><i class="fas fa-search"></i></div>
-              <div class="activity-details">
-                <p>Complex search performed: <code>"quantum physics research papers after:2020"</code></p>
-                <span class="activity-time">32 minutes ago</span>
-              </div>
-            </div>
-            
-            <div class="activity-item">
-              <div class="activity-icon success"><i class="fas fa-cloud-upload-alt"></i></div>
-              <div class="activity-details">
-                <p>System backup completed successfully</p>
-                <span class="activity-time">1 hour ago</span>
-              </div>
+              <h3 id="searches-today">N/A</h3>
+              <p>Searches Today</p>
             </div>
           </div>
         </div>
         
         <div class="admin-section">
-          <h2>Quick Actions</h2>
-          <div class="action-buttons">
-            <a href="users.html" class="admin-btn primary small" style="text-decoration: none;"><i class="fas fa-user-cog"></i> Manage Users</a>
-            <a href="settings.html" class="admin-btn secondary small" style="text-decoration: none;"><i class="fas fa-tools"></i> System Settings</a>
-            <a href="security.html" class="admin-btn danger small" style="text-decoration: none;"><i class="fas fa-shield"></i> Security</a>
-          </div>
+          <h2>Recent Searches</h2>
+          <ul id="recent-searches" class="recent-searches-list">
+            <li class="loading">Loading recent searches...</li>
+          </ul>
         </div>
       </div>
     </div>
   </div>
   <script>
-    document.addEventListener("DOMContentLoaded", async function () {
-    console.log("DOM loaded, fetching admin stats...");
-    try {
-        const response = await fetch("http://localhost:3000/api/admin-stats");
-        console.log("Response status:", response.status);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log("Received data:", data);
-        
-        if (data.success) {
-            // Set total users count
+    document.addEventListener('DOMContentLoaded', async function() {
+      // Check if user is admin
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (!user || user.user_type !== 'admin') {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Function to fetch and update stats
+      async function updateStats() {
+        try {
+          const response = await fetch('http://localhost:3000/api/admin-stats');
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          const data = await response.json();
+
+          if (data.success) {
             document.getElementById("total-users").textContent = data.totalUsers.toLocaleString();
-            console.log("Set total users to:", data.totalUsers);
-            
-            // Set academic users count
             document.getElementById("academic-users").textContent = data.academicUsers.toLocaleString();
-            console.log("Set academic users to:", data.academicUsers);
-        } else {
-            console.error("Server returned success: false");
+            document.getElementById("searches-today").textContent = data.searchesToday.toLocaleString();
+          }
+        } catch (error) {
+          console.error('Error fetching admin stats:', error);
         }
-    } catch (error) {
-        console.error("Error fetching admin stats:", error);
-        document.getElementById("academic-users").textContent = "?";
-    }
-});
+      }
+
+      // Function to fetch and update recent searches
+      async function updateRecentSearches() {
+        try {
+          const response = await fetch('http://localhost:3000/api/recent-searches');
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          const data = await response.json();
+
+          if (data.success) {
+            const searchesList = document.getElementById("recent-searches");
+            if (data.searches.length === 0) {
+              searchesList.innerHTML = '<li>No recent searches found</li>';
+            } else {
+              searchesList.innerHTML = data.searches
+                .map(search => `
+                  <li>
+                    <strong>${search.username}</strong>: ${search.query}
+                    <span class="search-time">${search.date}</span>
+                  </li>
+                `)
+                .join('');
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching recent searches:', error);
+        }
+      }
+
+      // Initial update
+      await updateStats();
+      await updateRecentSearches();
+
+      // Set up auto-refresh every 10 seconds
+      setInterval(async () => {
+        await updateStats();
+        await updateRecentSearches();
+      }, 10000);
+    });
   </script>
+  <style>
+    .recent-searches-list {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0;
+    }
+    
+    .recent-searches-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #333;
+    }
+    
+    .recent-searches-list li:last-child {
+      border-bottom: none;
+    }
+    
+    .recent-searches-list .loading {
+      color: #666;
+      font-style: italic;
+    }
+
+    .search-time {
+      color: #666;
+      font-size: 0.8rem;
+      margin-left: 0.5rem;
+    }
+
+    .recent-searches-list li strong {
+      color: #9F67E3;
+      margin-right: 0.5rem;
+    }
+  </style>
 </body>
 </html>

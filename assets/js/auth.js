@@ -1,5 +1,4 @@
-const BASE_API_URL = 'http://127.0.0.1:3000/api/db';
-
+const BASE_API_URL = '/api/db';
 
 async function executeQuery(query, params = []) {
     try {
@@ -16,7 +15,7 @@ async function executeQuery(query, params = []) {
         console.log('Query result:', data);
         return data;
     } catch (error) {
-        console.error('Network/server error:', { query, params, error: error.message });
+        console.error('Network/server error:', error);
         return { error: error.message };
     }
 }
@@ -77,17 +76,16 @@ export async function loginUser(email, password) {
 
         const result = await response.json();
 
-        if (response.ok && !result.error) {
+        if (response.ok && result.success) {
             return result;
         } else {
-            return { error: result.error || 'Login failed' };
+            return { error: result.error || 'Invalid email or password.' };
         }
     } catch (error) {
         console.error('Error during login:', error);
         return { error: 'An error occurred during login. Please try again.' };
     }
 }
-
 
 export function setAuthToken(userData) {
     localStorage.setItem('seeker_user', JSON.stringify(userData));
