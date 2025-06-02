@@ -28,7 +28,7 @@ function updateUI(user) {
       <a href="#" class="userbar-link"><i class="fas fa-search"></i> My Searches</a>
       <a href="#" class="userbar-link"><i class="fas fa-cog"></i> Settings</a>
     `;
-    if (user.is_admin) {
+    if (user.user_type === 'admin') {
       linksHTML += `<a href="admin.html" class="userbar-link"><i class="fas fa-shield-halved"></i> Admin Panel</a>`;
     }
     linksHTML += `<a href="#" id="logoutBtn" class="userbar-link"><i class="fas fa-sign-out-alt"></i> Logout</a>`;
@@ -160,14 +160,21 @@ function showLoginForm() {
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
 
-    const user = await loginUser(email, password);
+    const response = await loginUser(email, password);
 
-    if (user.error) {
-      alert(user.error);
+    if (response.error) {
+      alert(response.error);
     } else {
-      setAuthToken(user);
+      // Store user data in localStorage
+      const userData = {
+        user_id: response.user_id,
+        username: response.username,
+        user_type: response.user_type
+      };
+      localStorage.setItem('user', JSON.stringify(userData));
+      
       closeModal();
-      updateUI(user);
+      updateUI(userData);
     }
   });
 }

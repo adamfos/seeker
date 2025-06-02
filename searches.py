@@ -15,3 +15,18 @@ def save_search(conn, user_id, search_id, title, notes, tags=None, goal=None):
         print("Error saving search:", e)
         conn.rollback()
         return False
+
+def log_search_query(conn, query):
+    """Log a search query to the searches table"""
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO searches (original_query)
+                VALUES (%s)
+            """, (query,))
+        conn.commit()
+        return True
+    except Exception as e:
+        print("Error logging search query:", e)
+        conn.rollback()
+        return False

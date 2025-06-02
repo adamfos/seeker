@@ -3,11 +3,106 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Seeker » Users</title>
+  <title>Seeker » User Management</title>
   <link rel="stylesheet" href=".\assets\css\styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="icon" href="assets/img/seeker.png">
+  <style>
+    .users-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background: #2a2a2b;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .users-table th,
+    .users-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #333;
+    }
+
+    .users-table th {
+      background: #333;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .users-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .users-table tr:hover {
+      background: #333;
+    }
+
+    .user-type-badge {
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .user-type-admin { background: #d63031; color: #fff; }
+    .user-type-academic { background: #0984e3; color: #fff; }
+    .user-type-student { background: #00b894; color: #fff; }
+    .user-type-professional { background: #fdcb6e; color: #fff; }
+
+    .action-button {
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-right: 0.5rem;
+    }
+
+    .edit-btn {
+      background: #0984e3;
+      color: white;
+    }
+
+    .delete-btn {
+      background: #d63031;
+      color: #fff;
+    }
+
+    .search-bar {
+      width: 100%;
+      max-width: 300px;
+      padding: 0.5rem 1rem;
+      border: 2px solid #333;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      background: #2a2a2b;
+      color: #fff;
+    }
+
+    .search-bar::placeholder {
+      color: #666;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+    }
+
+    @media (max-width: 768px) {
+      .users-table {
+        display: block;
+        overflow-x: auto;
+      }
+      
+      .search-bar {
+        max-width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="admin-container">
@@ -16,7 +111,6 @@
         <a href="admin.html" class="admin-nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
         <a href="#" class="admin-nav-link active"><i class="fas fa-users"></i> Users</a>
         <a href="settings.html" class="admin-nav-link"><i class="fas fa-cog"></i> Settings</a>
-        <a href="security.html" class="admin-nav-link"><i class="fas fa-shield-alt"></i> Security</a>
       </nav>
       <div class="admin-footer">
         <a href="index.html" class="admin-nav-link"><i class="fas fa-sign-out-alt"></i> Exit</a>
@@ -26,217 +120,139 @@
     <div class="admin-main">
       <div class="admin-header">
         <div class="admin-breadcrumb">
-          <span>Users</span>
+          <span>User Management</span>
         </div>
       </div>
       
       <div class="admin-content">
-        <div class="admin-section">
-          <div class="admin-toolbar">
-            <div class="search-box-container">
-              <input type="text" placeholder="Search users..." class="admin-search">
-              <button class="admin-search-btn"><i class="fas fa-search"></i></button>
-            </div>
-            <button class="admin-btn primary" onclick="location.reload();">
-              <i class="fas fa-sync-alt"></i> Refresh Users
-          </button>
-          </div>
-          
-          <div class="admin-table-container">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Type</th>
-                  <th>Status</th>
-                  <th>Registered</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="users-table-body">
-                <!-- Dynamic data will be inserted here -->
-              </tbody>
-            </table>
-          </div>
-          
-          <div class="admin-pagination">
-            <button class="pagination-btn disabled"><i class="fas fa-chevron-left"></i></button>
-            <button class="pagination-btn active">1</button>
-            <button class="pagination-btn">2</button>
-            <button class="pagination-btn">3</button>
-            <span class="pagination-ellipsis">...</span>
-            <button class="pagination-btn">8</button>
-            <button class="pagination-btn"><i class="fas fa-chevron-right"></i></button>
-          </div>
-        </div>
+        <input type="text" id="userSearch" class="search-bar" placeholder="Search users...">
+        
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Type</th>
+              <th>Institution</th>
+              <th>Registered</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <tr>
+              <td colspan="6" class="empty-state">
+                <i class="fas fa-spinner fa-spin"></i> Loading users...
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", async function () {
-        const usersPerPage = 10;
-        let currentPage = 1;
-        let totalUsers = 0;
-        let usersData = [];
-        let filteredUsers = [];
+    document.addEventListener('DOMContentLoaded', async function() {
+      // Check if user is admin
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (!user || user.user_type !== 'admin') {
+        window.location.href = 'index.html';
+        return;
+      }
 
-        async function fetchUsers() {
-            try {
-                const response = await fetch("http://localhost:3000/api/db", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ query: "SELECT * FROM users ORDER BY registration_date DESC", params: [] }),
-                });
+      const usersTableBody = document.getElementById('usersTableBody');
+      const searchInput = document.getElementById('userSearch');
+      let allUsers = [];
 
-                const data = await response.json();
-                console.log("Fetched users:", data);
+      // Fetch users
+      try {
+        const response = await fetch('http://localhost:3000/api/users');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
 
-                if (data.rows && data.rows.length > 0) {
-                    usersData = data.rows;
-                    filteredUsers = usersData; // Initially, show all users
-                    totalUsers = filteredUsers.length;
-                    currentPage = 1; // Reset to first page
-                    updatePagination();
-                    populateTable();
-                } else {
-                    console.warn("No users found.");
-                }
-            } catch (error) {
-                console.error("Error fetching users:", error);
-            }
+        if (data.success) {
+          allUsers = data.users;
+          renderUsers(allUsers);
+        }
+      } catch (error) {
+        console.error('Error fetching users:', error);
+        usersTableBody.innerHTML = `
+          <tr>
+            <td colspan="6" class="empty-state">
+              <i class="fas fa-exclamation-circle"></i> Error loading users. Please try again.
+            </td>
+          </tr>
+        `;
+      }
+
+      // Search functionality
+      searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredUsers = allUsers.filter(user => 
+          user.username.toLowerCase().includes(searchTerm) ||
+          user.email.toLowerCase().includes(searchTerm) ||
+          user.institution.toLowerCase().includes(searchTerm)
+        );
+        renderUsers(filteredUsers);
+      });
+
+      // Delete user handler
+      async function deleteUser(userId) {
+        if (!confirm('Are you sure you want to delete this user?')) return;
+
+        try {
+          const response = await fetch(`http://localhost:3000/api/users/${userId}`, {
+            method: 'DELETE'
+          });
+          const data = await response.json();
+
+          if (data.success) {
+            allUsers = allUsers.filter(user => user.id !== userId);
+            renderUsers(allUsers);
+          } else {
+            alert('Failed to delete user');
+          }
+        } catch (error) {
+          console.error('Error deleting user:', error);
+          alert('Error deleting user');
+        }
+      }
+
+      // Render users function
+      function renderUsers(users) {
+        if (users.length === 0) {
+          usersTableBody.innerHTML = `
+            <tr>
+              <td colspan="6" class="empty-state">
+                <i class="fas fa-users-slash"></i> No users found
+              </td>
+            </tr>
+          `;
+          return;
         }
 
-        function populateTable() {
-            const tbody = document.getElementById("users-table-body");
-            tbody.innerHTML = "";
+        usersTableBody.innerHTML = users.map(user => `
+          <tr>
+            <td>${user.username}</td>
+            <td>${user.email}</td>
+            <td>
+              <span class="user-type-badge user-type-${user.user_type}">
+                ${user.user_type}
+              </span>
+            </td>
+            <td>${user.institution}</td>
+            <td>${user.registration_date}</td>
+            <td>
+              <button class="action-button delete-btn" onclick="deleteUser(${user.id})">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
 
-            const start = (currentPage - 1) * usersPerPage;
-            const end = start + usersPerPage;
-            const usersToShow = filteredUsers.slice(start, end);
-
-            usersToShow.forEach(user => {
-                const userTypeIcons = {
-                    "admin": '<i class="fas fa-shield-halved"></i>&nbsp;',
-                    "professional": '<i class="fas fa-briefcase"></i>&nbsp;',
-                    "academic": '<i class="fas fa-university"></i>&nbsp;',
-                    "student": '<i class="fas fa-graduation-cap"></i>&nbsp;',
-                };
-
-                const icon = userTypeIcons[user.user_type] || '<i class="fas fa-user-circle"></i>';
-
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td><code>#${user.user_id}</code></td>
-                    <td>${user.username}</td>
-                    <td>${user.email}</td>
-                    <td><span class="badge ${user.user_type.toLowerCase()}">${icon} ${user.user_type}</span></td>
-                    <td><span class="badge active"><i class="fas fa-circle-check"></i>&nbsp;Verified</span></td>
-                    <td>${new Date(user.registration_date).toISOString().split("T")[0]}</td>
-                    <td>
-                        <button class="table-btn edit" data-id="${user.user_id}"><i class="fas fa-edit"></i></button>
-                        <button class="table-btn delete" data-id="${user.user_id}"><i class="fas fa-trash"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-
-            addEventListeners();
-        }
-
-        function updatePagination() {
-            const paginationContainer = document.querySelector(".admin-pagination");
-            paginationContainer.innerHTML = "";
-
-            const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
-            if (totalPages <= 1) return; // Hide pagination if only one page
-
-            const prevButton = document.createElement("button");
-            prevButton.className = `pagination-btn ${currentPage === 1 ? "disabled" : ""}`;
-            prevButton.innerHTML = `<i class="fas fa-chevron-left"></i>`;
-            prevButton.onclick = () => changePage(currentPage - 1);
-            paginationContainer.appendChild(prevButton);
-
-            for (let i = 1; i <= totalPages; i++) {
-                const pageButton = document.createElement("button");
-                pageButton.className = `pagination-btn ${i === currentPage ? "active" : ""}`;
-                pageButton.textContent = i;
-                pageButton.onclick = () => changePage(i);
-                paginationContainer.appendChild(pageButton);
-            }
-
-            const nextButton = document.createElement("button");
-            nextButton.className = `pagination-btn ${currentPage === totalPages ? "disabled" : ""}`;
-            nextButton.innerHTML = `<i class="fas fa-chevron-right"></i>`;
-            nextButton.onclick = () => changePage(currentPage + 1);
-            paginationContainer.appendChild(nextButton);
-        }
-
-        function changePage(page) {
-            const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
-            if (page < 1 || page > totalPages) return;
-            currentPage = page;
-            populateTable();
-            updatePagination();
-        }
-
-        function addEventListeners() {
-            document.querySelectorAll(".delete").forEach(button => {
-                button.addEventListener("click", async function () {
-                    const userId = this.dataset.id;
-                    if (confirm("Are you sure you want to delete this user?")) {
-                        await deleteUser(userId);
-                    }
-                });
-            });
-
-            document.querySelectorAll(".edit").forEach(button => {
-                button.addEventListener("click", function () {
-                    alert(`Edit user with ID: ${this.dataset.id}`);
-                });
-            });
-        }
-
-        async function deleteUser(userId) {
-            try {
-                const response = await fetch("http://localhost:3000/api/db", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ query: "DELETE FROM users WHERE user_id = $1", params: [userId] }),
-                });
-
-                const data = await response.json();
-                if (data.rowCount > 0) {
-                    await fetchUsers();
-                } else {
-                    alert("Error deleting user.");
-                }
-            } catch (error) {
-                console.error("Error deleting user:", error);
-            }
-        }
-
-        function filterUsers() {
-            const searchInput = document.querySelector(".admin-search").value.toLowerCase();
-            filteredUsers = usersData.filter(user =>
-                user.username.toLowerCase().includes(searchInput) ||
-                user.email.toLowerCase().includes(searchInput) ||
-                user.user_type.toLowerCase().includes(searchInput) ||
-                String(user.user_id).includes(searchInput)
-            );
-
-            totalUsers = filteredUsers.length;
-            currentPage = 1; // Reset to first page after search
-            updatePagination();
-            populateTable();
-        }
-
-        document.querySelector(".admin-search").addEventListener("input", filterUsers);
-
-        await fetchUsers();
+      // Make deleteUser available globally
+      window.deleteUser = deleteUser;
     });
-</script>
+  </script>
 </body>
 </html>
