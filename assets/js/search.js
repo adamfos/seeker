@@ -5,6 +5,24 @@ async function getGoogleApiKey() {
     return data.apiKey;
 }
 
+async function logSearch(query) {
+    try {
+        const response = await fetch('/api/log-search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ query })
+        });
+
+        if (!response.ok) {
+            console.error('Failed to log search query:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error logging search query:', error);
+    }
+}
+
 
 
 export async function generateOptimizedSearchString(userInput) {
