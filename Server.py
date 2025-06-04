@@ -189,6 +189,7 @@ def login_user():
 
         if user and bcrypt.checkpw(password.encode('utf-8'), user[2].encode('utf-8')):
             # Password matches
+            session['user_id'] = user[0]  # Store user_id in session
             return jsonify({
                 'success': True,
                 'user_id': user[0],

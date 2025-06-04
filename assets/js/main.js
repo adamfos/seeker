@@ -223,16 +223,15 @@ function showLoginForm() {
     if (response.error) {
       alert(response.error);
     } else {
-      // Store user data in localStorage
-      const userData = {
+      // Store user data in localStorage using setAuthToken
+      setAuthToken({
         user_id: response.user_id,
         username: response.username,
         user_type: response.user_type
-      };
-      localStorage.setItem('user', JSON.stringify(userData));
+      });
       
       closeModal();
-      updateUI(userData);
+      updateUI(response);
     }
   });
 }
