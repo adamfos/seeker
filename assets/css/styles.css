@@ -1491,7 +1491,9 @@ body {
   padding: 1.25rem 1.5rem;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s ease;
+  
 }
+
 
 .search-card:hover {
   transform: translateY(-3px);
@@ -1547,4 +1549,38 @@ body {
 
 .btn.secondary:hover {
   color: #64b5f6;
+}
+
+/*  Revisit button style */
+
+.btn.revisit {
+  background-color: #8b5cf6; 
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.btn.revisit i {
+  font-size: 14px;
+}
+
+.btn.revisit:hover {
+  background-color: #7c3aed; 
+}
+
+.search-link {
+  text-decoration: none;
+  color: #9F67E3;
+}
+
+
+.search-link:hover {
+  color: #d1c7db; 
 }

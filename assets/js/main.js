@@ -143,13 +143,13 @@ document.getElementById('saveSearchBtn').addEventListener('click', async () => {
     console.log("Svar från /api/save-search:", result);
 
     if (result.success) {
-      alert("✅ Sökningen har sparats!");
+      alert("✅ Search has been saved!");
     } else {
-      alert("❌ Kunde inte spara: " + result.error);
+      alert("❌ Could not save your search: " + result.error);
     }
   } catch (error) {
-    console.error("Fel vid sparande:", error);
-    alert("Ett fel uppstod när sökningen skulle sparas.");
+    console.error("Failed to save.", error);
+    alert("Something went wrong when trying to save your search.");
   }
 });
 
@@ -309,3 +309,14 @@ function resetInactivityTimer() {
     }
   }, 3 * 60 * 1000);
 }
+document.addEventListener('DOMContentLoaded', () => {
+  const savedQuery = localStorage.getItem('revisitSearch');
+  if (savedQuery) {
+    const input = document.getElementById('search-box');
+    if (input) {
+      input.value = savedQuery;
+    }
+    localStorage.removeItem('revisitSearch');
+  }
+});
+
