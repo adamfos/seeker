@@ -214,14 +214,20 @@ function showLoginForm() {
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
 
-    const user = await loginUser(email, password);
+    const response = await loginUser(email, password);
 
-    if (user.error) {
-      alert(user.error);
+    if (response.error) {
+      alert(response.error);
     } else {
-      setAuthToken(user);
+      // Store user data in localStorage using setAuthToken
+      setAuthToken({
+        user_id: response.user_id,
+        username: response.username,
+        user_type: response.user_type
+      });
+      
       closeModal();
-      updateUI(user);
+      updateUI(response);
     }
   });
 }
