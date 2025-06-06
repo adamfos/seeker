@@ -102,8 +102,8 @@ function setupSearch() {
             <div class="search-actions">
               <button id="copy-button" class="action-button"><i class="far fa-copy"></i> Copy</button>
               <a href="https://www.google.com/search?q=${encodeURIComponent(result.searchString)}" target="_blank" class="action-button"><i class="fas fa-external-link-alt"></i> Search on Google</a>
-              <button id="saveSearchBtn" class="action-button">💾 Spara sökning</button>
-            </div>
+              <button id="saveSearchBtn" class="action-button"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg> Spara sökning</button>
+              </div>
           </div>
         `;
 
@@ -112,8 +112,6 @@ document.getElementById('saveSearchBtn').addEventListener('click', async () => {
   console.log("Inloggad användare:", user);
   const searchString = searchBox.value.trim();
   const goal = document.getElementById('searchGoal')?.value;
-
-  
 
 
   if (!user || !user.user_id) {
@@ -143,16 +141,15 @@ document.getElementById('saveSearchBtn').addEventListener('click', async () => {
     console.log("Svar från /api/save-search:", result);
 
     if (result.success) {
-      alert("✅ Search has been saved!");
+      alert(" Search has been saved!");
     } else {
-      alert("❌ Could not save your search: " + result.error);
+      alert(" Could not save your search: " + result.error);
     }
   } catch (error) {
     console.error("Failed to save.", error);
     alert("Something went wrong when trying to save your search.");
   }
 });
-
 
         document.getElementById('copy-button').addEventListener('click', () => {
           navigator.clipboard.writeText(result.searchString)
@@ -186,7 +183,6 @@ document.getElementById('saveSearchBtn').addEventListener('click', async () => {
     }
   });
 }
-
 
 function closeModal() {
   document.getElementById('authModal').style.display = 'none';

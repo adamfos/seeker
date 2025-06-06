@@ -294,6 +294,21 @@ def get_saved_searches_full(user_id):
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
+@app.route('/api/delete-search/<int:saved_search_id>', methods=['DELETE'])
+def delete_saved_search(saved_search_id):
+    try:
+        cursor.execute("""
+            DELETE FROM saved_searches
+            WHERE saved_search_id = %s
+        """, (saved_search_id,))
+        conn.commit()
+        return jsonify({ 'success': cursor.rowcount > 0 })
+    except Exception as e:
+        print('Error deleting saved search:', e)
+        conn.rollback()
+        return jsonify({ 'success': False, 'error': str(e) })
+
+
 
 # Run the Flask server
 if __name__ == '__main__':

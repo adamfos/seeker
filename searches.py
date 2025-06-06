@@ -7,7 +7,7 @@ def save_search(conn, user_id, search_string, goal=None):
             print("Användare:", user_id)
             print("Söksträng:", search_string)
 
-            # Lägg till i searches
+            # Add to searches
             cur.execute("""
                 INSERT INTO searches (user_id, original_query, generated_query, search_engine, search_date, result_count, search_parameters, is_saved)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE)
@@ -17,16 +17,16 @@ def save_search(conn, user_id, search_string, goal=None):
             search_id = cur.fetchone()[0]
             print(">>> Ny search_id:", search_id)
 
-            # Lägg till i saved_searches
+            # Add to saved_searches
             cur.execute("""
                 INSERT INTO saved_searches (user_id, search_id, title, notes, saved_date, tags)
                 VALUES (%s, %s, %s, %s, %s, %s)
             """, (user_id, search_id, 'Sparad sökning', '', datetime.now(), ''))
 
         conn.commit()
-        print(">>> Sökning sparad! ✅")
+        print(">>> Search has been saved!")
         return True
     except Exception as e:
-        print("❌ Error saving search:", e)
+        print(" Error saving search:", e)
         conn.rollback()
         return False
