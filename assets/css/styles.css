@@ -1551,7 +1551,7 @@ body {
   color: #64b5f6;
 }
 
-/*  Revisit button style */
+/*  Revisit & delete button style */
 
 .btn.revisit {
   background-color: #8b5cf6; 
@@ -1583,4 +1583,26 @@ body {
 
 .search-link:hover {
   color: #d1c7db; 
+}
+
+.btn.primary {
+  background-color: #8b5cf6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.btn.primary i {
+  font-size: 14px;
+}
+
+.btn.primary:hover {
+  background-color: #8a56c7;
 }

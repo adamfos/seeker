@@ -18,30 +18,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         const card = document.createElement('div');
         card.className = 'search-card';
 
+        console.log("Search object:", search);
         card.innerHTML = `
           <div>
             <h2 class="search-title">
-  <a href="#" class="search-link" data-query="${search.original_query}">
-    ${search.original_query}
-  </a>
-</h2>
-           
-             <p class="search-date"><strong> Saved on: </strong>${new Date(search.saved_date).toLocaleDateString()}</p>
-             <p class="search-goal"><strong> Engine: </strong> ${search.search_engine}</p>
+              <a href="#" class="search-link" data-query="${search.original_query}">
+                ${search.original_query}
+              </a>
+            </h2>
+            <p class="search-date"><strong>Saved on: </strong>${new Date(search.saved_date).toLocaleDateString()}</p>
+            <p class="search-goal"><strong>Engine: </strong>${search.search_engine}</p>
           </div>
           <div class="search-card-actions">
             <button class="btn revisit" data-query="${search.original_query}">
               <i class="fas fa-redo"></i> Revisit
             </button>
-            <button class="btn secondary"><i class="fas fa-pencil-alt"></i></button>
-            <button class="btn danger"><i class="fas fa-trash"></i></button>
+            <button type="button" class="btn primary delete-search-btn" data-id="${search.saved_search_id}">
+              <i class="fas fa-trash"></i>Delete
+              </button>
+
           </div>
         `;
 
         container.appendChild(card);
       });
 
-      // Event listeners för revisit-knappar och länk-titlar
+      // Revisit
       document.querySelectorAll('.btn.revisit, .search-link').forEach(el => {
         el.addEventListener('click', (e) => {
           e.preventDefault();
@@ -59,4 +61,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error("Failed to fetch data:", error);
     alert("Could not retrieve your saved searches.");
   }
+
+  // Delete functionality
+  document.querySelector('.search-card-grid').addEventListener('click', async (e) => {
+    if (e.target.closest('.delete-search-btn')) {
+      const btn = e.target.closest('.delete-search-btn');
+      const id = btn.dataset.id;
+      if (confirm('Are you sure you want to delete this search?')) {
+        const res = await fetch(`/api/delete-search/${id}`, {
+          method: 'DELETE'
+        });
+        const data = await res.json();
+        console.log("Svar från /api/delete-search:", data);
+
+        if (data.success) {
+          btn.closest('.search-card').remove();
+        } else {
+          alert('Kunde inte radera sökningen.');
+        }
+      }
+    }
+  });
 });
