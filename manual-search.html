@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manual Search – Seeker</title>
-  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="/assets/css/styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <link rel="icon" href="assets/img/seeker.png">
+  <link rel="icon" href="/assets/img/seeker.png">
 </head>
 <body>
   <div class="userbar">
@@ -15,20 +15,21 @@
     <div class="userbar-links" id="userbarLinks"></div>
   </div>
   <div class="container" id="mainContent">
+    <img src="https://i.ibb.co/pvmJX8pm/output-onlinepngtools.png" alt="Seeker Logo" class="logo">
     <div id="authContainer"></div>
-    <div id="searchContainer">
-      <form id="manualSearchForm">
-        <input type="text" id="manualQuery" placeholder="Enter keywords…" required>
+    <form id="manualSearchForm">
+      <div class="search-container">
+        <input type="text" id="manualQuery" placeholder="Enter keywords…" class="search-box" required>
         <select id="searchGoal" name="goal" required>
           <option value="">– Select –</option>
           <option value="articles">Articles</option>
           <option value="pdf">PDF Files</option>
           <option value="videos">Videos</option>
         </select>
-        <button type="submit">Search</button>
-      </form>
+        <button type="submit" class="search-button"><i class="fas fa-magnifying-glass"></i></button>
+      </div>
       <div id="search-results" class="search-results"></div>
-    </div>
+    </form>
   </div>
   <div id="authModal" class="modal">
     <div class="modal-content">
@@ -36,8 +37,8 @@
       <div id="modalContent"></div>
     </div>
   </div>
-  <script type="module" src="assets/js/auth.js"></script>
-  <script type="module" src="assets/js/search.js"></script>
-  <script type="module" src="assets/js/main.js"></script>
+  <script type="module" src="/assets/js/auth.js"></script>
+  <script type="module" src="/assets/js/search.js"></script>
+  <script type="module" src="/assets/js/main.js"></script>
 </body>
 </html>
