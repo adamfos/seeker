@@ -19,7 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function updateUI(user) {
-  const userbarLinks = document.getElementById('userbarLinks');
+  const userbarLinks = document.querySelector('.userbar-links');
+  if (!userbarLinks) {
+    console.error('Element with class "userbar-links" not found in the DOM.');
+    return;
+  }
   const mainContent = document.getElementById('mainContent');
   const authContainer = document.getElementById('authContainer');
 
