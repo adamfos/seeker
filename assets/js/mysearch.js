@@ -26,8 +26,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ${search.original_query}
               </a>
             </h2>
-            <p class="search-date"><strong>Saved on: </strong>${new Date(search.saved_date).toLocaleDateString()}</p>
-            <p class="search-goal"><strong>Engine: </strong>${search.search_engine}</p>
+            <p class="search-date"><strong>Saved on: </strong><span class="testclass">${new Date(search.saved_date).toLocaleDateString()}</span></p>
+            <p class="search-goal"><strong>Engine: </strong><span class="testclass">${search.search_engine}</span></p>
           </div>
           <div class="search-card-actions">
             <button class="btn revisit" data-query="${search.original_query}">

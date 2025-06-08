@@ -1500,7 +1500,7 @@ body {
 }
 
 .search-title {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: #9F67E3;
   margin-bottom: 0.5rem;
@@ -1514,11 +1514,14 @@ body {
 
 .search-date,
 .search-description,
-.search-goal,
-.search-notes {
+.search-goal {
   margin: 0.2rem 0;
-  font-size: 0.95rem;
+  font-size: 1.2rem;
   color: #ccc;
+}
+
+.testclass{
+  color: #7e7e7e;
 }
 
 .search-card-actions {
@@ -1586,11 +1589,11 @@ body {
 }
 
 .btn.primary {
-  background-color: #8b5cf6;
+  background-color: #824848;
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 8px 14px;
+  padding: 10px;
   font-size: 14px;
   cursor: pointer;
   display: flex;
