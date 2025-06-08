@@ -66,7 +66,6 @@ def serve_assets(path):
 @app.route('/<path:filename>')
 def serve_page(filename):
     return send_from_directory('.', filename)
-  
 
 # Test the database connection
 @app.route('/api/test', methods=['GET'])
@@ -314,6 +313,8 @@ def save_search_route():
 
 @app.route('/api/get-searches/<int:user_id>', methods=['GET'])
 def get_saved_searches(user_id):
+    """Fetches searches for a given user_id"""
+
     try:
         cursor.execute("""
             SELECT original_query, search_date
@@ -335,9 +336,11 @@ def get_saved_searches(user_id):
         print('Error fetching searches:', e)
         return jsonify({'success': False, 'error': str(e)}), 500
 
-#
+
 @app.route('/api/saved-searches/<int:user_id>', methods=['GET'])
 def get_saved_searches_full(user_id):
+    """Fetches all saved searches for a given user_id"""
+
     try:
         print(f"Hämtar sparade sökningar för user_id: {user_id}")
         cursor.execute("""
@@ -371,6 +374,8 @@ def get_saved_searches_full(user_id):
 
 @app.route('/api/delete-search/<int:saved_search_id>', methods=['DELETE'])
 def delete_saved_search(saved_search_id):
+    """Deletes a saved search based on its unique ID"""
+
     try:
         cursor.execute("""
             DELETE FROM saved_searches
