@@ -1609,3 +1609,27 @@ body {
 .btn.primary:hover {
   background-color: #8a56c7;
 }
+
+.search-container select,
+#searchGoal {
+  padding: 0.5em 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #ffffff;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='5'><polyline points='0,0 5,5 10,0' style='fill:none;stroke:%23666;stroke-width:1'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.75em center;
+  background-size: 10px 5px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.search-container select:focus,
+#searchGoal:focus {
+  outline: none;
+  border-color: #888;
+  box-shadow: 0 0 0 2px rgba(136, 136, 136, 0.2);
+}
