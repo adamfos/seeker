@@ -54,3 +54,25 @@ export async function generateOptimizedSearchString(userInput) {
         return { error: "Failed to generate search string. Please try again." };
     }
 }
+
+// Manual Search form handler
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('manualSearchForm');
+  if (!form) return;
+  const resultsContainer = document.getElementById('search-results');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let query = document.getElementById('manualQuery').value.trim();
+    const goal = document.getElementById('searchGoal').value;
+    if (goal === 'pdf') {
+      query += ' filetype:pdf';
+    } else if (goal === 'videos') {
+      query += ' site:youtube.com';
+    }
+    // Launch Google search in new tab
+    window.open(
+      `https://www.google.com/search?q=${encodeURIComponent(query)}`,
+      '_blank'
+    );
+  });
+});
