@@ -57,7 +57,9 @@ function updateUI(user) {
 
     if (!isManual) {
       mainContent.innerHTML = `
-        <img src="https://i.ibb.co/pvmJX8pm/output-onlinepngtools.png" alt="Seeker Logo" class="logo">
+        <a href="index.html">
+          <img src="https://i.ibb.co/pvmJX8pm/output-onlinepngtools.png" alt="Seeker Logo" class="logo">
+        </a>
         <div class="search-container">
           <input type="text" id="search-box" placeholder="Enter your search query..." class="search-box">
           <button id="search-button" class="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
