@@ -2,7 +2,7 @@ from flask import Flask, send_from_directory, jsonify, request, session
 import psycopg2
 import os
 from dotenv import load_dotenv
-from searches import save_search
+from searches import save_search, log_search_query
 import bcrypt
 
 from werkzeug.security import check_password_hash
@@ -155,14 +155,15 @@ def log_search():
         data = request.get_json()
         query = data.get('query')
         user_id = data.get('user_id')
+        generated_query = data.get('generated_query', '')
         
         if not query:
             return jsonify({'success': False, 'error': 'No query provided'})
         
         cursor.execute("""
-            INSERT INTO searches (user_id, original_query, search_date)
-            VALUES (%s, %s, CURRENT_TIMESTAMP)
-        """, (user_id, query))
+            INSERT INTO searches (user_id, original_query, generated_query, search_date)
+            VALUES (%s, %s, %s, CURRENT_TIMESTAMP)
+        """, (user_id, query, generated_query))
         conn.commit()
         
         return jsonify({'success': True})
