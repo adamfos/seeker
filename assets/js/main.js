@@ -105,10 +105,19 @@ function setupSearch() {
 
   const handleSearch = async () => {
     resetInactivityTimer();
-    const query = searchBox.value.trim();
+    let query = searchBox.value.trim();
     if (!query) {
       searchResults.innerHTML = '<p class="error">Please enter a search query</p>';
       return;
+    }
+
+    const goal = document.getElementById('searchGoal')?.value;
+    if (goal === 'pdf') {
+      query += ' filetype:pdf';
+    } else if (goal === 'articles') {
+      // no extra modifier needed for general web articles
+    } else if (goal === 'videos') {
+      query += ' site:youtube.com';
     }
 
     searchResults.innerHTML = '<p class="loading">Generating optimized search string...</p>';
@@ -338,4 +347,3 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.removeItem('revisitSearch');
   }
 });
-
