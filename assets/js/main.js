@@ -64,7 +64,7 @@ function updateUI(user) {
       <p class="description">
         Seeker generates advanced Google search strings to help you find precise information effortlessly. 
         Designed for students and researchers.<br><br>
-        Alternative: <a class="color" href="#">Manual Search</a>
+        Alternative: <a class="color" href="manual-search.html">Manual Search</a>
       </p>
     `;
     document.getElementById('logoutBtn').addEventListener('click', async () => {
