@@ -77,7 +77,7 @@
       // Function to fetch and update stats
       async function updateStats() {
         try {
-          const response = await fetch('http://localhost:3000/api/admin-stats');
+          const response = await fetch('/api/admin-stats');
           if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
           const data = await response.json();
 
@@ -94,7 +94,7 @@
       // Function to fetch and update recent searches
       async function updateRecentSearches() {
         try {
-          const response = await fetch('http://localhost:3000/api/recent-searches');
+          const response = await fetch('/api/recent-searches');
           if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
           const data = await response.json();
 

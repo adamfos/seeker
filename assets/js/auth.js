@@ -35,8 +35,9 @@ export async function registerUser(username, email, password, userType, institut
     }
 
     try {
-        const response = await fetch('http://127.0.0.1:3000/api/register', {
+        const response = await fetch('/api/register', {
             method: 'POST',
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 username,
@@ -70,6 +71,7 @@ export async function loginUser(email, password) {
     try {
         const response = await fetch('/api/login', {
             method: 'POST',
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
