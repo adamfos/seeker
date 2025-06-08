@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manual Search – Seeker</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html">Home</a> |
+      <a href="manual-search.html" class="active">Manual Search</a>
+    </nav>
+  </header>
+  <main id="mainContent">
+    <h1>Manual Search</h1>
+    <form id="manualSearchForm">
+      <div class="form-group">
+        <label for="manualQuery">Search Query</label>
+        <input type="text" id="manualQuery" placeholder="Enter keywords…" required />
+      </div>
+      <div class="form-group">
+        <label for="searchGoal">Filter by type</label>
+        <select id="searchGoal" name="goal" required>
+          <option value="">– Select –</option>
+          <option value="articles">Articles</option>
+          <option value="pdf">PDF Files</option>
+          <option value="videos">Videos</option>
+        </select>
+      </div>
+      <button type="submit">Search</button>
+    </form>
+    <div id="search-results" class="search-results"></div>
+  </main>
+  <script src="assets/js/search.js"></script>
+</body>
+</html>
