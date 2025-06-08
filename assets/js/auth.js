@@ -1,5 +1,4 @@
-const BASE_API_URL = 'http://127.0.0.1:3000/api/db';
-
+const BASE_API_URL = '/api/db';
 
 async function executeQuery(query, params = []) {
     try {
@@ -16,7 +15,7 @@ async function executeQuery(query, params = []) {
         console.log('Query result:', data);
         return data;
     } catch (error) {
-        console.error('Network/server error:', { query, params, error: error.message });
+        console.error('Network/server error:', error);
         return { error: error.message };
     }
 }
@@ -36,8 +35,9 @@ export async function registerUser(username, email, password, userType, institut
     }
 
     try {
-        const response = await fetch('http://127.0.0.1:3000/api/register', {
+        const response = await fetch('/api/register', {
             method: 'POST',
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 username,
@@ -71,23 +71,23 @@ export async function loginUser(email, password) {
     try {
         const response = await fetch('/api/login', {
             method: 'POST',
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
 
         const result = await response.json();
 
-        if (response.ok && !result.error) {
+        if (response.ok && result.success) {
             return result;
         } else {
-            return { error: result.error || 'Login failed' };
+            return { error: result.error || 'Invalid email or password.' };
         }
     } catch (error) {
         console.error('Error during login:', error);
         return { error: 'An error occurred during login. Please try again.' };
     }
 }
-
 
 export function setAuthToken(userData) {
     localStorage.setItem('seeker_user', JSON.stringify(userData));
@@ -98,7 +98,25 @@ export function getAuthToken() {
     return user ? JSON.parse(user) : null;
 }
 
-export function logout() {
-    localStorage.removeItem('seeker_user');
-    window.location.href = '/';
+export async function logoutUser() {
+    try {
+        const response = await fetch('/api/logout', {
+            method: 'POST',
+            credentials: 'include'
+        });
+        // Clear client-side auth
+        localStorage.removeItem('seeker_user');
+        // Redirect to home
+        window.location.href = '/';
+        return await response.json();
+    } catch (error) {
+        // Clear client-side auth even on error
+        localStorage.removeItem('seeker_user');
+        window.location.href = '/';
+        console.error('Error during logout:', error);
+        throw error;
+    }
 }
+
+// Backward compatibility
+export { logoutUser as logout };

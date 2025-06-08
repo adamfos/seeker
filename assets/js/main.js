@@ -1,8 +1,22 @@
-import { getAuthToken, logout, loginUser, registerUser, setAuthToken } from './auth.js';
+import { getAuthToken, logoutUser, loginUser, registerUser, setAuthToken } from './auth.js';
 import { generateOptimizedSearchString } from './search.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const authToken = getAuthToken();
+document.addEventListener('DOMContentLoaded', async () => {
+  let authToken = getAuthToken();
+  if (authToken) {
+    try {
+      const res = await fetch('/api/check-session', { credentials: 'include' });
+      const session = await res.json();
+      if (!session.loggedIn) {
+        authToken = null;
+        setAuthToken(null);
+      }
+    } catch (error) {
+      console.error('Failed to validate session:', error);
+      authToken = null;
+      setAuthToken(null);
+    }
+  }
   updateUI(authToken);
 
   document.querySelector(".menu-toggle").addEventListener("click", function () {
@@ -19,7 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function updateUI(user) {
-  const userbarLinks = document.getElementById('userbarLinks');
+  const isManual = window.location.pathname.endsWith('manual-search.html');
+  const userbarLinks = document.querySelector('.userbar-links');
+  if (!userbarLinks) {
+    console.error('Element with class "userbar-links" not found in the DOM.');
+    return;
+  }
   const mainContent = document.getElementById('mainContent');
   const authContainer = document.getElementById('authContainer');
 
@@ -36,21 +55,29 @@ function updateUI(user) {
     linksHTML += `<a href="#" id="logoutBtn" class="userbar-link"><i class="fas fa-sign-out-alt"></i> Logout</a>`;
     userbarLinks.innerHTML = linksHTML;
 
-    mainContent.innerHTML = `
-      <img src="https://i.ibb.co/pvmJX8pm/output-onlinepngtools.png" alt="Seeker Logo" class="logo">
-      <div class="search-container">
-        <input type="text" id="search-box" placeholder="Enter your search query..." class="search-box">
-        <button id="search-button" class="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
-      </div>
-      <div id="search-results" class="search-results"></div>
-      <p class="description">
-        Seeker generates advanced Google search strings to help you find precise information effortlessly. 
-        Designed for students and researchers.<br><br>
-        Alternative: <a class="color" href="#">Manual Search</a>
-      </p>
-    `;
-    document.getElementById('logoutBtn').addEventListener('click', logout);
-    setupSearch();
+    if (!isManual) {
+      mainContent.innerHTML = `
+        <a href="index.html">
+          <img src="https://i.ibb.co/pvmJX8pm/output-onlinepngtools.png" alt="Seeker Logo" class="logo">
+        </a>
+        <div class="search-container">
+          <input type="text" id="search-box" placeholder="Enter your search query..." class="search-box">
+          <button id="search-button" class="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+        <p class="description">
+          Seeker generates advanced Google search strings to help you find precise information effortlessly. 
+          Designed for students and researchers.<br><br>
+          Alternative: <a class="color" href="manual-search.html">Manual Search</a>
+        </p>
+      `;
+      setupSearch();
+    }
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await logoutUser();
+      setAuthToken(null);
+      updateUI(null);
+    });
   } else {
     userbarLinks.innerHTML = `
       <a href="#" id="loginBtn" class="userbar-link"><i class="fas fa-sign-in-alt"></i> Login</a>
@@ -83,10 +110,19 @@ function setupSearch() {
 
   const handleSearch = async () => {
     resetInactivityTimer();
-    const query = searchBox.value.trim();
+    let query = searchBox.value.trim();
     if (!query) {
       searchResults.innerHTML = '<p class="error">Please enter a search query</p>';
       return;
+    }
+
+    const goal = document.getElementById('searchGoal')?.value;
+    if (goal === 'pdf') {
+      query += ' filetype:pdf';
+    } else if (goal === 'articles') {
+      // no extra modifier needed for general web articles
+    } else if (goal === 'videos') {
+      query += ' site:youtube.com';
     }
 
     searchResults.innerHTML = '<p class="loading">Generating optimized search string...</p>';
@@ -213,16 +249,23 @@ function showLoginForm() {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
-
-    const user = await loginUser(email, password);
-
-    if (user.error) {
-      alert(user.error);
-    } else {
-      setAuthToken(user);
-      closeModal();
-      updateUI(user);
+  
+    const response = await loginUser(email, password);
+  
+    if (!response.success) {
+      // Display server-provided message or a generic error
+      alert(response.message || response.error || 'Login failed');
+      return;
     }
+  
+    // Persist user session and update UI
+    setAuthToken({
+      user_id: response.user_id,
+      username: response.username,
+      user_type: response.user_type
+    });
+    closeModal();
+    updateUI(response);
   });
 }
 
@@ -309,4 +352,3 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.removeItem('revisitSearch');
   }
 });
-

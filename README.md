@@ -3,7 +3,7 @@
 ![Seeker Logo](https://i.ibb.co/pvmJX8pm/output-onlinepngtools.png)
 
 > **Version:** 1.5  
-> **Repository:** [adamfos/seeker](https://github.com/adamfos/seeker)  
+> **Repository:** https://github.com/adamfos/seeker  
 > **Teknologier:** Python (Flask), PostgreSQL, Vanilla JS
 
 ## Innehållsförteckning
