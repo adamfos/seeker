@@ -1,8 +1,22 @@
 import { getAuthToken, logoutUser, loginUser, registerUser, setAuthToken } from './auth.js';
 import { generateOptimizedSearchString } from './search.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const authToken = getAuthToken();
+document.addEventListener('DOMContentLoaded', async () => {
+  let authToken = getAuthToken();
+  if (authToken) {
+    try {
+      const res = await fetch('/api/check-session', { credentials: 'include' });
+      const session = await res.json();
+      if (!session.loggedIn) {
+        authToken = null;
+        setAuthToken(null);
+      }
+    } catch (error) {
+      console.error('Failed to validate session:', error);
+      authToken = null;
+      setAuthToken(null);
+    }
+  }
   updateUI(authToken);
 
   document.querySelector(".menu-toggle").addEventListener("click", function () {
