@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Seeker » Settings</title>
-  <link rel="stylesheet" href=".\assets\css\styles.css">
+  <link rel="stylesheet" href="/assets/css/styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="icon" href="assets/img/seeker.png">
@@ -14,7 +14,7 @@
     <div class="admin-sidebar">
       <nav class="admin-nav">
         <a href="admin.html" class="admin-nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-        <a href="users.html" class="admin-nav-link"><i class="fas fa-users"></i> Users</a>
+        <a id="usersLink" href="users.html" class="admin-nav-link"><i class="fas fa-users"></i> Users</a>
         <a href="#" class="admin-nav-link active"><i class="fas fa-cog"></i> Settings</a>
         <a href="security.html" class="admin-nav-link"><i class="fas fa-shield-alt"></i> Security</a>
       </nav>
@@ -183,4 +183,13 @@ The Seeker Team</textarea>
     </div>
   </div>
 </body>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const user = JSON.parse(localStorage.getItem('seeker_user') || 'null');
+    const usersLink = document.getElementById('usersLink');
+    if (!user || user.user_type !== 'admin') {
+      usersLink.style.display = 'none';
+    }
+  });
+</script>
 </html>
