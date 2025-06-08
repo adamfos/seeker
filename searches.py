@@ -30,3 +30,18 @@ def save_search(conn, user_id, search_string, goal=None):
         print(" Error saving search:", e)
         conn.rollback()
         return False
+
+def log_search_query(conn, query):
+    """
+    Log a raw search query to the searches table.
+    """
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                "INSERT INTO searches (original_query, search_date) VALUES (%s, %s)",
+                (query, datetime.now())
+            )
+        conn.commit()
+    except Exception as e:
+        print("Error logging search query:", e)
+        conn.rollback()
