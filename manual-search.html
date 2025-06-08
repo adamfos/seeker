@@ -11,7 +11,7 @@
 </head>
 <body>
   <div class="userbar">
-    <button class="menu-toggle"><i class="fas fa-bars"></i></button>
+    <button class="menu-toggle" aria-label="Toggle navigation menu"><i class="fas fa-bars"></i></button>
     <div class="userbar-links" id="userbarLinks"></div>
   </div>
   <div class="container" id="mainContent">
@@ -22,13 +22,13 @@
     <form id="manualSearchForm">
       <div class="search-container">
         <input type="text" id="manualQuery" placeholder="Enter keywords…" class="search-box" required>
-        <select id="searchGoal" name="goal" required>
-          <option value="">– Select –</option>
+        <select id="searchGoal" name="goal" aria-label="Filter search results by type" required>
+          <option value="">Select</option>
           <option value="articles">Articles</option>
           <option value="pdf">PDF Files</option>
           <option value="videos">Videos</option>
         </select>
-        <button type="submit" class="search-button"><i class="fas fa-magnifying-glass"></i></button>
+        <button type="submit" class="search-button" aria-label="Search"><i class="fas fa-magnifying-glass"></i></button>
       </div>
       <div id="search-results" class="search-results"></div>
     </form>

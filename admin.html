@@ -68,8 +68,9 @@
   <script>
     document.addEventListener('DOMContentLoaded', async function() {
       // Check if user is admin
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const user = JSON.parse(localStorage.getItem('seeker_user') || 'null');
       if (!user || user.user_type !== 'admin') {
+        alert('Chill! You are not admin!');
         window.location.href = 'index.html';
         return;
       }
