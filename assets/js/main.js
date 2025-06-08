@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function updateUI(user) {
+  const isManual = window.location.pathname.endsWith('manual-search.html');
   const userbarLinks = document.querySelector('.userbar-links');
   if (!userbarLinks) {
     console.error('Element with class "userbar-links" not found in the DOM.');
@@ -54,25 +55,27 @@ function updateUI(user) {
     linksHTML += `<a href="#" id="logoutBtn" class="userbar-link"><i class="fas fa-sign-out-alt"></i> Logout</a>`;
     userbarLinks.innerHTML = linksHTML;
 
-    mainContent.innerHTML = `
-      <img src="https://i.ibb.co/pvmJX8pm/output-onlinepngtools.png" alt="Seeker Logo" class="logo">
-      <div class="search-container">
-        <input type="text" id="search-box" placeholder="Enter your search query..." class="search-box">
-        <button id="search-button" class="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
-      </div>
-      <div id="search-results" class="search-results"></div>
-      <p class="description">
-        Seeker generates advanced Google search strings to help you find precise information effortlessly. 
-        Designed for students and researchers.<br><br>
-        Alternative: <a class="color" href="manual-search.html">Manual Search</a>
-      </p>
-    `;
+    if (!isManual) {
+      mainContent.innerHTML = `
+        <img src="https://i.ibb.co/pvmJX8pm/output-onlinepngtools.png" alt="Seeker Logo" class="logo">
+        <div class="search-container">
+          <input type="text" id="search-box" placeholder="Enter your search query..." class="search-box">
+          <button id="search-button" class="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+        <p class="description">
+          Seeker generates advanced Google search strings to help you find precise information effortlessly. 
+          Designed for students and researchers.<br><br>
+          Alternative: <a class="color" href="manual-search.html">Manual Search</a>
+        </p>
+      `;
+      setupSearch();
+    }
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await logoutUser();
       setAuthToken(null);
       updateUI(null);
     });
-    setupSearch();
   } else {
     userbarLinks.innerHTML = `
       <a href="#" id="loginBtn" class="userbar-link"><i class="fas fa-sign-in-alt"></i> Login</a>
