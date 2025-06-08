@@ -1,38 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manual Search – Seeker</title>
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="icon" href="assets/img/seeker.png">
 </head>
 <body>
-  <header>
-    <nav>
-      <a href="index.html">Home</a> |
-      <a href="manual-search.html" class="active">Manual Search</a>
-    </nav>
-  </header>
-  <main id="mainContent">
-    <h1>Manual Search</h1>
-    <form id="manualSearchForm">
-      <div class="form-group">
-        <label for="manualQuery">Search Query</label>
-        <input type="text" id="manualQuery" placeholder="Enter keywords…" required />
-      </div>
-      <div class="form-group">
-        <label for="searchGoal">Filter by type</label>
+  <div class="userbar">
+    <button class="menu-toggle"><i class="fas fa-bars"></i></button>
+    <div class="userbar-links" id="userbarLinks"></div>
+  </div>
+  <div class="container" id="mainContent">
+    <div id="authContainer"></div>
+    <div id="searchContainer">
+      <form id="manualSearchForm">
+        <input type="text" id="manualQuery" placeholder="Enter keywords…" required>
         <select id="searchGoal" name="goal" required>
           <option value="">– Select –</option>
           <option value="articles">Articles</option>
           <option value="pdf">PDF Files</option>
           <option value="videos">Videos</option>
         </select>
-      </div>
-      <button type="submit">Search</button>
-    </form>
-    <div id="search-results" class="search-results"></div>
-  </main>
-  <script src="assets/js/search.js"></script>
+        <button type="submit">Search</button>
+      </form>
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+  <div id="authModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+  <script type="module" src="assets/js/auth.js"></script>
+  <script type="module" src="assets/js/search.js"></script>
+  <script type="module" src="assets/js/main.js"></script>
 </body>
 </html>
