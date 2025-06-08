@@ -98,7 +98,25 @@ export function getAuthToken() {
     return user ? JSON.parse(user) : null;
 }
 
-export function logout() {
-    localStorage.removeItem('seeker_user');
-    window.location.href = '/';
+export async function logoutUser() {
+    try {
+        const response = await fetch('/api/logout', {
+            method: 'POST',
+            credentials: 'include'
+        });
+        // Clear client-side auth
+        localStorage.removeItem('seeker_user');
+        // Redirect to home
+        window.location.href = '/';
+        return await response.json();
+    } catch (error) {
+        // Clear client-side auth even on error
+        localStorage.removeItem('seeker_user');
+        window.location.href = '/';
+        console.error('Error during logout:', error);
+        throw error;
+    }
 }
+
+// Backward compatibility
+export { logoutUser as logout };
