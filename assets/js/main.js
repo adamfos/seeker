@@ -217,22 +217,23 @@ function showLoginForm() {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
-
+  
     const response = await loginUser(email, password);
-
-    if (response.error) {
-      alert(response.error);
-    } else {
-      // Store user data in localStorage using setAuthToken
-      setAuthToken({
-        user_id: response.user_id,
-        username: response.username,
-        user_type: response.user_type
-      });
-      
-      closeModal();
-      updateUI(response);
+  
+    if (!response.success) {
+      // Display server-provided message or a generic error
+      alert(response.message || response.error || 'Login failed');
+      return;
     }
+  
+    // Persist user session and update UI
+    setAuthToken({
+      user_id: response.user_id,
+      username: response.username,
+      user_type: response.user_type
+    });
+    closeModal();
+    updateUI(response);
   });
 }
 
