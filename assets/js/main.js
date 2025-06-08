@@ -1,4 +1,4 @@
-import { getAuthToken, logout, loginUser, registerUser, setAuthToken } from './auth.js';
+import { getAuthToken, logoutUser, loginUser, registerUser, setAuthToken } from './auth.js';
 import { generateOptimizedSearchString } from './search.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -53,7 +53,11 @@ function updateUI(user) {
         Alternative: <a class="color" href="#">Manual Search</a>
       </p>
     `;
-    document.getElementById('logoutBtn').addEventListener('click', logout);
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await logoutUser();
+      setAuthToken(null);
+      updateUI(null);
+    });
     setupSearch();
   } else {
     userbarLinks.innerHTML = `
